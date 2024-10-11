@@ -1,7 +1,7 @@
 function App() {
   return (
     <>
-      <div>BTA PROJECT</div>
+      <div className="text-red-500 underline">BTA PROJECT</div>
     </>
   );
 }
