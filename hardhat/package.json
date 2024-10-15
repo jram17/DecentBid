@@ -6,10 +6,10 @@
     "dotenv": "^16.4.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run ./deploy/deploy.js",
+    "localnode": "npx hardhat node",
+    "start": "concurrently \"npm run compile\" \"npm run localnode\" \"npm run deploy\" "
   },
   "eslintConfig": {
     "extends": [
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
     "@openzeppelin/contracts": "^4.8.2",
+    "concurrently": "^9.0.1",
     "hardhat": "^2.22.13"
   }
 }
