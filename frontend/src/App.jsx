@@ -8,10 +8,12 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import Home from './pages/Home';
 import Layout from './components/Layout';
+import CreateAuction from './pages/CreateAuction';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<Home />} />
+      <Route path="/create-auction" element={<CreateAuction />} />
     </Route>
   )
 );
