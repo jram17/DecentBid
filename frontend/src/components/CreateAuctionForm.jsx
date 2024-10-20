@@ -10,7 +10,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useSelector } from 'react-redux';
+import { storage } from '@/firebase/firebaseconfig';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
+
+import { useNavigate } from 'react-router-dom';
 import {
   Popover,
   PopoverContent,
@@ -29,7 +34,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-// Zod schema and regex for validation
 const _regex = /^(?=.*[a-zA-Z])[a-zA-Z0-9\s\W]+$/i;
 const fileSchema = z
   .instanceof(FileList)
@@ -84,6 +88,8 @@ const formSchema = z.object({
 });
 
 export function AuctionForm() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [error, setErrorMsg] = useState('');
@@ -99,34 +105,44 @@ export function AuctionForm() {
       start_of_auction: null,
     },
   });
+  const auctionId = nanoid();
 
-  const fileUpload = async (file) => {
-    console.log(file);
-    const formData = new FormData();
-    formData.append('file', file);
+  const fileUpload = async (auctionId, file) => {
+    if (!file) return null;
+    const storageRef = ref(storage, `auctions/${auctionId}/${file.name}`);
+
+    try {
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(snapshot.ref);
+      return url;
+    } catch (error) {
+      setLoading(false);
+      setError(true);
+      setErrorMsg('Error uploading file');
+    }
   };
 
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const auctionId = nanoid();
+      setError(false);
+      setErrorMsg('');
       const owner_address = address;
-      console.log('cme here');
-      console.log(data);
-      const coverImageUrl = await fileUpload(data.cover_image[0]);
-      console.log(coverImageUrl);
-      // Upload additional images (if any)
-      // const additionalImageUrls = await Promise.all(
-      //   data.add_images
-      //     ? Array.from(data.add_images).map((file) => {
-      //         return fileUpload(file);
-      //       })
-      //     : []
-      // );
+
+      const coverImageUrl = await fileUpload(auctionId, data.cover_image[0]);
+
+      const additionalImageUrls = data.add_images
+        ? await Promise.all(
+            Array.from(data.add_images).map((file) =>
+              fileUpload(auctionId, file)
+            )
+          )
+        : [];
 
       const auctionData = {
+        auctionname: data.auctionname,
         auctionId,
-        owner_address,
+        address: owner_address,
         auctionproduct: data.auctionproduct,
         description: data.description,
         min_eth: data.min_eth,
@@ -135,13 +151,24 @@ export function AuctionForm() {
         start_of_auction: data.start_of_auction,
       };
 
-      console.log(auctionData);
-      // Handle your API call or any other action here
-      setLoading(false);
+      const response = await axios.post(
+        'http://localhost:3000/create-auction',
+        auctionData
+      );
+      if (response.status === 201) {
+        setError(false);
+        setErrorMsg('');
+        setLoading(false);
+        form.reset();
+        toast({
+          title: 'Auction created successfully',
+        });
+        navigate('/');
+      }
     } catch (error) {
       console.log(error);
       setError(true);
-      setErrorMsg('Failed to upload files or submit the form.');
+      setErrorMsg('Failed to upload the data.');
       setLoading(false);
     }
   };

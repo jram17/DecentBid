@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { envconfig } from "envconfig";
+import { envconfig } from "../../envconfig";
 import { getStorage } from 'firebase/storage';
 const firebaseConfig = {
     apiKey: envconfig.VITE_FIREBASE_API_KEY,

@@ -5,12 +5,13 @@ const AuctionSchema = new mongoose.Schema({
     owner: String,
     auctionname: String,
     auctionproduct: String,
+    auctionId: String,
     description: String,
     min_eth: Number,
     cover_image: String,
     add_images: [String],
     start_of_auction: Date,
-    isComitEnabled: {
+    isCommitEnabled: {
         type: Boolean,
         default: false
     },
@@ -18,7 +19,7 @@ const AuctionSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isWinnerAnnouced: {
+    isWinnerAnnounced: {
         type: Boolean,
         default: false
     }
