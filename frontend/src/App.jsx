@@ -35,7 +35,6 @@ function App() {
     // Add your network checking logic here
   };
   const _connectWallet = async () => {
-    console.log('hit');
     if (window.ethereum) {
       const [selectedAddress] = await window.ethereum.request({
         method: 'eth_requestAccounts',
