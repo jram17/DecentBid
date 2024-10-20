@@ -9,6 +9,7 @@ import { Textarea } from './ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useSelector } from 'react-redux';
 import {
   Popover,
   PopoverContent,
@@ -73,7 +74,7 @@ export function AuctionForm() {
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [error, setErrorMsg] = useState('');
-
+  const address = useSelector((state) => state.address.address);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {

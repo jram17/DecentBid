@@ -4,6 +4,9 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setAddress } from './redux/slice/AddressSlice';
+
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import Home from './pages/Home';
@@ -19,11 +22,11 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  const [account, setAccount] = useState(null);
+  const dispatch = useDispatch();
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const _initialize = async (selectedAddress) => {
-    setAccount(selectedAddress);
+    dispatch(setAddress(selectedAddress));
     // Add your initialization logic here
   };
   const _stopPollingData = () => {
@@ -60,11 +63,7 @@ function App() {
   useEffect(() => {
     _connectWallet();
   }, []);
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

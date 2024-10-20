@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuctionForm } from '@/components/CreateAuction';
+import { AuctionForm } from '@/components/CreateAuctionForm';
 const CreateAuction = () => {
   return (
     <div>
