@@ -10,6 +10,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
 import {
   Popover,
   PopoverContent,
@@ -28,10 +29,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+// Zod schema and regex for validation
 const _regex = /^(?=.*[a-zA-Z])[a-zA-Z0-9\s\W]+$/i;
 const fileSchema = z
   .instanceof(FileList)
   .refine((files) => files.length > 0, 'At least one file is required.')
+  .refine(
+    (files) => files.length <= 3,
+    'A maximum of three files can be provided.'
+  )
   .refine(
     (files) =>
       Array.from(files).every((file) =>
@@ -39,7 +45,14 @@ const fileSchema = z
       ),
     'Only jpg and png images are accepted.'
   );
+
 const formSchema = z.object({
+  auctionname: z
+    .string()
+    .min(6, {
+      message: 'Auction product should be at least 6 letters long.',
+    })
+    .regex(_regex, 'This is not a valid name'),
   auctionproduct: z
     .string()
     .min(6, {
@@ -75,9 +88,11 @@ export function AuctionForm() {
   const [isError, setError] = useState(false);
   const [error, setErrorMsg] = useState('');
   const address = useSelector((state) => state.address.address);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      auctionname: '',
       auctionproduct: '',
       description: '',
       min_eth: 0,
@@ -85,19 +100,79 @@ export function AuctionForm() {
     },
   });
 
-  const onSubmit = (data) => {
-    const auctionId = nanoid();
-    const owner_address = console.log(data);
+  const fileUpload = async (file) => {
+    console.log(file);
+    const formData = new FormData();
+    formData.append('file', file);
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      const auctionId = nanoid();
+      const owner_address = address;
+      console.log('cme here');
+      console.log(data);
+      const coverImageUrl = await fileUpload(data.cover_image[0]);
+      console.log(coverImageUrl);
+      // Upload additional images (if any)
+      // const additionalImageUrls = await Promise.all(
+      //   data.add_images
+      //     ? Array.from(data.add_images).map((file) => {
+      //         return fileUpload(file);
+      //       })
+      //     : []
+      // );
+
+      const auctionData = {
+        auctionId,
+        owner_address,
+        auctionproduct: data.auctionproduct,
+        description: data.description,
+        min_eth: data.min_eth,
+        cover_image: coverImageUrl,
+        add_images: additionalImageUrls,
+        start_of_auction: data.start_of_auction,
+      };
+
+      console.log(auctionData);
+      // Handle your API call or any other action here
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setError(true);
+      setErrorMsg('Failed to upload files or submit the form.');
+      setLoading(false);
+    }
   };
 
   const handleFileChange = (event, field) => {
     const files = event.target.files;
-    field.onChange(files);
+    try {
+      fileSchema.parse(files); // Validate files with Zod
+      field.onChange(files);
+    } catch (error) {
+      setErrorMsg(error.errors[0].message);
+      setError(true);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="auctionname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>AuctionName</FormLabel>
+              <FormControl>
+                <Input placeholder="Auction Name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="auctionproduct"
@@ -138,9 +213,7 @@ export function AuctionForm() {
               <FormLabel>Minimum Product Value</FormLabel>
               <FormControl>
                 <Input
-                  placeholder=""
                   type="number"
-                  className=""
                   {...field}
                   onChange={(e) => field.onChange(parseFloat(e.target.value))}
                 />
@@ -161,11 +234,9 @@ export function AuctionForm() {
               <FormLabel>Cover Image</FormLabel>
               <FormControl>
                 <Input
-                  placeholder=""
                   type="file"
-                  className="hover:cursor-pointer"
+                  accept="image/jpeg, image/png"
                   onChange={(e) => handleFileChange(e, field)}
-                  accept="image/png, image/jpeg"
                 />
               </FormControl>
               <FormDescription>Accepted types: jpg, jpeg, png</FormDescription>
@@ -182,10 +253,9 @@ export function AuctionForm() {
               <FormLabel>Additional Images</FormLabel>
               <FormControl>
                 <Input
-                  placeholder=""
                   type="file"
                   multiple
-                  className="hover:cursor-pointer"
+                  accept="image/jpeg, image/png"
                   onChange={(e) => handleFileChange(e, field)}
                 />
               </FormControl>
@@ -230,16 +300,17 @@ export function AuctionForm() {
                 </PopoverContent>
               </Popover>
               <FormDescription>
-                Auction can be started one day after registering
+                Auction can be scheduled for future
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" isLoading={form.formState.isSubmitting}>
-          Register
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Submitting...' : 'Submit'}
         </Button>
+        {isError && <p className="text-red-500">{error}</p>}
       </form>
     </Form>
   );

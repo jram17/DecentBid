@@ -33,7 +33,7 @@ function App() {
     // Add your logic to stop polling data here
   };
   const _resetState = () => {
-    setAccount(null);
+    dispatch(setAddress(null));
     // Add your logic to reset the state here
   };
   const _checkNetwork = async () => {
@@ -44,7 +44,6 @@ function App() {
       const [selectedAddress] = await window.ethereum.request({
         method: 'eth_requestAccounts',
       });
-      console.log(selectedAddress);
       await _checkNetwork();
       await _initialize(selectedAddress);
       const provider = await new ethers.providers.Web3Provider(window.ethereum);
