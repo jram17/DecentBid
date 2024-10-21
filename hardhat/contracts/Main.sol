@@ -12,5 +12,10 @@ contract Main {
         Owner = payable(msg.sender);
     }
 
-    function createAuction() public {}
+    function createAuction(uint256 _minbidamount) public payable {
+        if ((Owner.send(msg.value))) {
+            Auction _auction = new Auction(_minbidamount);
+            _auctiondetails[msg.sender] = _auction;
+        }
+    }
 }

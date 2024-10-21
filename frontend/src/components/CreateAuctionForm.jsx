@@ -14,7 +14,7 @@ import { storage } from '@/firebase/firebaseconfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
-
+import { CreateAuction } from '@/contracthooks/Auction';
 import { useNavigate } from 'react-router-dom';
 import {
   Popover,
@@ -124,6 +124,19 @@ export function AuctionForm() {
 
   const onSubmit = async (data) => {
     try {
+      const AuctionDeploy = await CreateAuction(data.min_eth);
+      if (AuctionDeploy.success) {
+        toast({
+          title: 'Auction contract deployed successfully',
+          status: 'success',
+        });
+      } else {
+        toast({
+          title: 'Error deploying auction contract',
+          status: 'error',
+        });
+        return;
+      }
       setLoading(true);
       setError(false);
       setErrorMsg('');
@@ -176,7 +189,7 @@ export function AuctionForm() {
   const handleFileChange = (event, field) => {
     const files = event.target.files;
     try {
-      fileSchema.parse(files); // Validate files with Zod
+      fileSchema.parse(files);
       field.onChange(files);
     } catch (error) {
       setErrorMsg(error.errors[0].message);
