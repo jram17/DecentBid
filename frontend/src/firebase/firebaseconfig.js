@@ -1,4 +1,3 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { envconfig } from "../../envconfig";
 import { getStorage } from 'firebase/storage';
@@ -12,7 +11,6 @@ const firebaseConfig = {
     measurementId: envconfig.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 

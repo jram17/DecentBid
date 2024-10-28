@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const CreateAuctionRouter = require('./routes/CreateAuctionRouter');
+const auctionsDetails = require("./routes/GetAuctionRouter");
 require('dotenv').config();
 const corsOptions = {
     origin: 'http://localhost:5173',
@@ -17,5 +18,6 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use('/create-auction', CreateAuctionRouter);
+app.use('/auctions', auctionsDetails);
 
 module.exports = app;

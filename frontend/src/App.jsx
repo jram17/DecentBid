@@ -6,22 +6,25 @@ import {
 } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAddress } from './redux/slice/AddressSlice';
-
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import Home from './pages/Home';
 import Layout from './components/Layout';
 import CreateAuction from './pages/CreateAuction';
+import Auctions from './pages/Auctions';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<Home />} />
       <Route path="/create-auction" element={<CreateAuction />} />
+      <Route path="/auctions" element={<Auctions />} />
     </Route>
   )
 );
 
 function App() {
+  axios.defaults.baseURL = 'http://localhost:3000';
   const dispatch = useDispatch();
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
