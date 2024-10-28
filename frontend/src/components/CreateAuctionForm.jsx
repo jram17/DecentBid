@@ -69,7 +69,7 @@ const formSchema = z.object({
       message: 'Description should be at least 20 characters long.',
     })
     .regex(_regex, 'This is not a valid description'),
-  min_eth: z.number().min(0.05, {
+  max_eth: z.number().min(0.05, {
     message: 'Minimum price should be at least 0.05 ETH.',
   }),
   cover_image: fileSchema,
@@ -101,7 +101,7 @@ export function AuctionForm() {
       auctionname: '',
       auctionproduct: '',
       description: '',
-      min_eth: 0,
+      max_eth: 0,
       start_of_auction: null,
     },
   });
@@ -123,8 +123,9 @@ export function AuctionForm() {
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     try {
-      const AuctionDeploy = await CreateAuction(data.min_eth);
+      const AuctionDeploy = await CreateAuction(0.01 * data.max_eth);
       if (AuctionDeploy.success) {
         toast({
           title: 'Auction contract deployed successfully',
@@ -158,7 +159,7 @@ export function AuctionForm() {
         address: owner_address,
         auctionproduct: data.auctionproduct,
         description: data.description,
-        min_eth: data.min_eth,
+        max_eth: data.max_eth,
         cover_image: coverImageUrl,
         add_images: additionalImageUrls,
         start_of_auction: data.start_of_auction,
@@ -247,10 +248,10 @@ export function AuctionForm() {
 
         <FormField
           control={form.control}
-          name="min_eth"
+          name="max_eth"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Minimum Product Value</FormLabel>
+              <FormLabel>Maximum Product Value</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -259,7 +260,8 @@ export function AuctionForm() {
                 />
               </FormControl>
               <FormDescription>
-                This much amount should be paid while registering the product
+                1%ent of the max amount should be paid while registering the
+                product
               </FormDescription>
               <FormMessage />
             </FormItem>

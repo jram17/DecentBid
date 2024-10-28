@@ -3,11 +3,11 @@ pragma solidity ^0.8.27;
 import "hardhat/console.sol";
 
 contract Auction {
-    uint256 _minbidamount;
+    uint256 _maxbidamount;
     address payable _auctionowner;
 
-    constructor(uint256 minbidamount) {
+    constructor(uint256 maxbidamount) {
         _auctionowner = payable(msg.sender);
-        _minbidamount = minbidamount;
+        _maxbidamount = maxbidamount;
     }
 }

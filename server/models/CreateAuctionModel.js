@@ -7,7 +7,7 @@ const AuctionSchema = new mongoose.Schema({
     auctionproduct: String,
     auctionId: String,
     description: String,
-    min_eth: Number,
+    max_eth: Number,
     cover_image: String,
     add_images: [String],
     start_of_auction: Date,
