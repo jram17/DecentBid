@@ -2,24 +2,25 @@ import axios from 'axios';
 import ListAuction from '@/components/ListAuction/ListAuction';
 import { useEffect, useState } from 'react';
 function Auctions() {
-  const [auctions, setAuctions] = useState(null);
-
+  const [auctions, setAuctions] = useState([]);
+  const [isLoading, setisLoading] = useState(true);
   useEffect(() => {
     const fetchAuctionDetails = async () => {
       try {
         const response = await axios.get('/auctions');
-        console.log(response);
         setAuctions(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setisLoading(false);
       }
     };
     fetchAuctionDetails();
   }, []);
+  if (isLoading) return <div>Loading...</div>;
   return (
     <div>
-      <ListAuction />
+      {auctions ? <ListAuction auctions={auctions} /> : 'No auctions ...'}
     </div>
   );
 }

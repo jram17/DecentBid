@@ -13,12 +13,15 @@ import Home from './pages/Home';
 import Layout from './components/Layout';
 import CreateAuction from './pages/CreateAuction';
 import Auctions from './pages/Auctions';
+import '@fontsource-variable/reddit-sans';
+import AuctionDetails from './pages/AuctionDetails';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<Home />} />
       <Route path="/create-auction" element={<CreateAuction />} />
       <Route path="/auctions" element={<Auctions />} />
+      <Route path="/auctions/:id" element={<AuctionDetails />} />
     </Route>
   )
 );
