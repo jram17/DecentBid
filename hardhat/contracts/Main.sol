@@ -4,7 +4,7 @@ import "./auction/Auction.sol";
 import "hardhat/console.sol";
 
 contract Main {
-    mapping(address _auctionowner => Auction _auctioninstance)
+    mapping(address _auctionowner => Auction[] _auctioninstance)
         public _auctiondetails;
     address payable public Owner;
 
@@ -18,7 +18,7 @@ contract Main {
     ) public payable {
         if ((Owner.send(msg.value))) {
             Auction _auction = new Auction(_maxbidamount, auctionId);
-            _auctiondetails[msg.sender] = _auction;
+            _auctiondetails[msg.sender].push(_auction);
         }
     }
 }
