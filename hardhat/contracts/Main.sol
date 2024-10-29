@@ -12,9 +12,12 @@ contract Main {
         Owner = payable(msg.sender);
     }
 
-    function createAuction(uint256 _maxbidamount) public payable {
+    function createAuction(
+        uint256 _maxbidamount,
+        string memory auctionId
+    ) public payable {
         if ((Owner.send(msg.value))) {
-            Auction _auction = new Auction(_maxbidamount);
+            Auction _auction = new Auction(_maxbidamount, auctionId);
             _auctiondetails[msg.sender] = _auction;
         }
     }

@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import ContractJson from '../../contractDetails.json';
 
 
-const CreateAuction = async (value) => {
+const CreateAuction = async (value, auctionId) => {
     const wei = ethers.utils.parseEther(value.toString());
 
     try {
@@ -14,7 +14,7 @@ const CreateAuction = async (value) => {
             signer
         );
         const tx = await auctionContract.createAuction(
-            wei, {
+            wei, auctionId, {
             value: ethers.utils.parseEther(value.toString()),
         })
         await tx.wait();

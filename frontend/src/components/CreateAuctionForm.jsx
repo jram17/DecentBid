@@ -125,7 +125,7 @@ export function AuctionForm() {
   const onSubmit = async (data) => {
     console.log(data);
     try {
-      const AuctionDeploy = await CreateAuction(0.01 * data.max_eth);
+      const AuctionDeploy = await CreateAuction(0.01 * data.max_eth, auctionId);
       if (AuctionDeploy.success) {
         toast({
           title: 'Auction contract deployed successfully',
