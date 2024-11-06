@@ -340,7 +340,7 @@ export function AuctionForm() {
                 </PopoverContent>
               </Popover>
               <FormDescription>
-                Auction can be scheduled for future
+                Auction can be only scheduled for future
               </FormDescription>
               <FormMessage />
             </FormItem>

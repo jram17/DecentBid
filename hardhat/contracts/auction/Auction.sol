@@ -3,8 +3,8 @@ pragma solidity ^0.8.27;
 import "hardhat/console.sol";
 
 contract Auction {
-    event unRevealed(address bidder, string _auctionid);
-    event Winner(address winner, string _auctionid);
+    event unRevealed(address indexed bidder, string indexed _auctionid);
+    event Winner(address indexed winner, string indexed _auctionid);
 
     struct BidDetails {
         address _bidder;

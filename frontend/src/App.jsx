@@ -15,6 +15,7 @@ import CreateAuction from './pages/CreateAuction';
 import Auctions from './pages/Auctions';
 import '@fontsource-variable/reddit-sans';
 import AuctionDetails from './pages/AuctionDetails';
+import EventHandlerProvider from './providers/EventHandlerProvider';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -68,7 +69,11 @@ function App() {
   useEffect(() => {
     _connectWallet();
   }, []);
-  return <RouterProvider router={router} />;
+  return (
+    <RouterProvider router={router}>
+      <EventHandlerProvider>{children}</EventHandlerProvider>
+    </RouterProvider>
+  );
 }
 
 export default App;
