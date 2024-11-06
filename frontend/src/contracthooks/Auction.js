@@ -21,6 +21,7 @@ const CreateAuction = async (value, auctionId) => {
         return {
             success: true,
             message: "Auction created successfully",
+
         };
     } catch (error) {
         console.log(error);

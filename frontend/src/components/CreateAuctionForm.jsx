@@ -69,7 +69,7 @@ const formSchema = z.object({
       message: 'Description should be at least 20 characters long.',
     })
     .regex(_regex, 'This is not a valid description'),
-  max_eth: z.number().min(0.05, {
+  min_eth: z.number().min(0.05, {
     message: 'Minimum price should be at least 0.05 ETH.',
   }),
   cover_image: fileSchema,
@@ -101,7 +101,7 @@ export function AuctionForm() {
       auctionname: '',
       auctionproduct: '',
       description: '',
-      max_eth: 0,
+      min_eth: 0,
       start_of_auction: null,
     },
   });
@@ -123,9 +123,8 @@ export function AuctionForm() {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     try {
-      const AuctionDeploy = await CreateAuction(0.01 * data.max_eth, auctionId);
+      const AuctionDeploy = await CreateAuction(data.min_eth, auctionId);
       if (AuctionDeploy.success) {
         toast({
           title: 'Auction contract deployed successfully',
@@ -159,7 +158,7 @@ export function AuctionForm() {
         address: owner_address,
         auctionproduct: data.auctionproduct,
         description: data.description,
-        max_eth: data.max_eth,
+        min_eth: data.min_eth,
         cover_image: coverImageUrl,
         add_images: additionalImageUrls,
         start_of_auction: data.start_of_auction,
@@ -248,7 +247,7 @@ export function AuctionForm() {
 
         <FormField
           control={form.control}
-          name="max_eth"
+          name="min_eth"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Maximum Product Value</FormLabel>
@@ -260,8 +259,7 @@ export function AuctionForm() {
                 />
               </FormControl>
               <FormDescription>
-                1%ent of the max amount should be paid while registering the
-                product
+                the min amount should be paid while registering the product
               </FormDescription>
               <FormMessage />
             </FormItem>

@@ -3,6 +3,9 @@ pragma solidity ^0.8.27;
 import "hardhat/console.sol";
 
 contract Auction {
+    event unRevealed(address bidder, string _auctionid);
+    event Winner(address winner, string _auctionid);
+
     struct BidDetails {
         address _bidder;
         string _bidHash;
@@ -11,15 +14,17 @@ contract Auction {
     }
 
     address payable[] _bidders;
-    uint256 _maxbidamount;
+    uint256 _minamount;
     address payable _auctionowner;
     string _auctionid;
     mapping(address => BidDetails) _biddetails;
+    uint256 _amount_to_be_paid;
+    address payable _winner;
 
-    constructor(uint256 maxbidamount, string memory auctionId) {
+    constructor(uint256 minamount, string memory auctionId) {
         _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
-        _maxbidamount = maxbidamount;
+        _minamount = minamount;
     }
 
     function getAuctionWinner() public payable {
@@ -30,31 +35,44 @@ contract Auction {
         require(_bidders.length > 0, "No bidding has been produced yet");
 
         uint256 _length = _bidders.length;
-        address _minbidder = _bidders[0];
+        address _maxbidder = _bidders[0];
         address _secondlastelement;
-
-        for (uint256 i = 1; i < _length; ++i) {
-            if (!_biddetails[_bidders[i]]._isRevealed) continue;
-            if (
-                _biddetails[_bidders[i]]._bidamount <
-                _biddetails[_minbidder]._bidamount
-            ) {
-                _secondlastelement = _minbidder;
-                _minbidder = _bidders[i];
+        if (_length == 1) {
+            _winner = _bidders[0];
+            _amount_to_be_paid = _biddetails[_winner]._bidamount;
+        } else {
+            for (uint256 i = 1; i < _length; ++i) {
+                if (!_biddetails[_bidders[i]]._isRevealed) {
+                    emit unRevealed(_bidders[i], _auctionid);
+                    continue;
+                }
+                if (
+                    _biddetails[_bidders[i]]._bidamount >
+                    _biddetails[_maxbidder]._bidamount
+                ) {
+                    _secondlastelement = _maxbidder;
+                    _maxbidder = _bidders[i];
+                }
             }
         }
 
-        address payable _winner = payable(_minbidder);
-        uint256 _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
+        _winner = payable(_maxbidder);
+        emit Winner(_winner, _auctionid);
+        _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
+        _auctionowner.transfer(_amount_to_be_paid);
+    }
 
+    function transferAmount() public {
+        uint256 _length = _bidders.length;
         for (uint256 i = 0; i < _length; ++i) {
             if (_bidders[i] == _winner) {
-                _winner.transfer(_maxbidamount - _amount_to_be_paid);
+                _winner.transfer(
+                    _biddetails[_bidders[i]]._bidamount - _amount_to_be_paid
+                );
             } else if (_biddetails[_bidders[i]]._isRevealed) {
-                _bidders[i].transfer(_maxbidamount);
-            } else {
-                _bidders[i].transfer(_maxbidamount);
+                _bidders[i].transfer(_biddetails[_bidders[i]]._bidamount);
             }
         }
+        _auctionowner.transfer(_amount_to_be_paid);
     }
 }

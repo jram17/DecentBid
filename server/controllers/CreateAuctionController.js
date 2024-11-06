@@ -1,7 +1,7 @@
 const AuctionDetails = require('../models/CreateAuctionModel');
 
 const createAuction = async (req, res) => {
-    const { address, auctionId, auctionproduct, description, start_of_auction, add_images, cover_image, max_eth, auctionname } = req.body;
+    const { address, auctionId, auctionproduct, description, start_of_auction, add_images, cover_image, min_eth, auctionname } = req.body;
     try {
         const newAuction = new AuctionDetails({
             auctionname,
@@ -12,7 +12,7 @@ const createAuction = async (req, res) => {
             start_of_auction,
             add_images,
             cover_image,
-            max_eth
+            min_eth
         });
         await newAuction.save();
         res.status(201).json({ message: 'Auction created successfully' });
