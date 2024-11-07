@@ -39,6 +39,20 @@ contract Auction {
         revealEndTime = commitEndTime + revealTime;
     }
 
+    modifier commitPhase(){
+        require(block.timestamp < commitEndTime && block.timestamp>=block.timestamp-1 ,"commit phase is over");
+        _;
+    }
+
+    modifier revealPhase(){
+        require( block.timestamp < revealEndTime, "reveal phase is over");
+        _;
+    }
+    modifier revealPhasestart(){
+        require(block.timestamp > commitEndTime, "reveal phase dint start");
+        _;
+    }
+
     modifier canBid() {
         require(_bidders[msg.sender]._hasbid == false, "you have already bid!!!");
         _;
