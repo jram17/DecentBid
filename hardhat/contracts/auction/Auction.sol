@@ -9,7 +9,10 @@ contract Auction {
     struct BidDetails {
         address _bidder;
         string _bidHash;
+        // secretSalt
+        string _secretSalt;
         uint256 _bidamount;
+        bool _hasBid;
         bool _isRevealed;
     }
 
