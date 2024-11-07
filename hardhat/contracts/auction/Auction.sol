@@ -54,20 +54,20 @@ contract Auction {
     }
 
     modifier canBid() {
-        require(_bidders[msg.sender]._hasbid == false, "you have already bid!!!");
+        require(_biddetails[msg.sender]._hasbid == false, "you have already bid!!!");
         _;
     }
     modifier canReveal() {
         require(
-            _bidders[msg.sender]._isReveled == false,
+            _biddetails[msg.sender]._isReveled == false,
             "you have already revealed!!!"
         );
         _;
     }
 
     function commitBid(bytes32 _secretBid) private {
-        _bidders[msg.sender]._hasbid = true;
-        _bidders[msg.sender]._bidHash = _secretBid;
+        _biddetails[msg.sender]._hasbid = true;
+        _biddetails[msg.sender]._bidHash = _secretBid;
     }
 
     // function getHash(uint _amt) public pure returns (bytes32) {
@@ -79,21 +79,19 @@ contract Auction {
         string calldata secretSalt
     ) external canBid commitPhase {
         commitBid(keccak256(abi.encodePacked(bidAmt, secretSalt)));
-        _bidders[msg.sender]._bidder = msg.sender;
+        _biddetails[msg.sender]._bidder = msg.sender;
     }
 
-    function revealBid(
-        uint bidAmt,
-        string calldata secretSalt
-    ) external canReveal revealPhasestart revealPhase {
+    function revealBid( uint bidAmt, string calldata secretSalt) 
+        external canReveal revealPhasestart revealPhase {
         bytes32 _hashBidAmt = getHash(bidAmt);
         require(
             keccak256(abi.encodePacked(_hashBidAmt, secretSalt)) ==
-                _bidders[msg.sender]._bidHash,
+                _biddetails[msg.sender]._bidHash,
             "bid amount and salt doesnot match !!!"
         );
-        _bidders[msg.sender]._isReveled = true;
-        _bidders[msg.sender]._bidamount = bidAmt;
+        _biddetails[msg.sender]._isReveled = true;
+        _biddetails[msg.sender]._bidamount = bidAmt;
     }
 
 
