@@ -9,7 +9,6 @@ contract Auction {
     struct BidDetails {
         address _bidder;
         string _bidHash;
-        // secretSalt
         string _secretSalt;
         uint256 _bidamount;
         bool _hasBid;
@@ -24,11 +23,66 @@ contract Auction {
     uint256 _amount_to_be_paid;
     address payable _winner;
 
-    constructor(uint256 minamount, string memory auctionId) {
+    uint private commitEndTime;
+    uint private revealEndTime;
+
+    constructor(
+        uint256 minamount,
+        string memory auctionId,
+        uint256 commitTime,
+        uint256 revealTime
+    ) {
         _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
         _minamount = minamount;
+        commitEndTime = block.timestamp + commitTime;
+        revealEndTime = commitEndTime + revealTime;
     }
+
+    modifier canBid() {
+        require(_bidders[msg.sender]._hasbid == false, "you have already bid!!!");
+        _;
+    }
+    modifier canReveal() {
+        require(
+            _bidders[msg.sender]._isReveled == false,
+            "you have already revealed!!!"
+        );
+        _;
+    }
+
+    function commitBid(bytes32 _secretBid) private {
+        _bidders[msg.sender]._hasbid = true;
+        _bidders[msg.sender]._bidHash = _secretBid;
+    }
+
+    // function getHash(uint _amt) public pure returns (bytes32) {
+    //     return keccak256(abi.encodePacked(_amt));
+    // }
+
+    function commit(
+        bytes32 bidAmt,
+        string calldata secretSalt
+    ) external canBid commitPhase {
+        commitBid(keccak256(abi.encodePacked(bidAmt, secretSalt)));
+        _bidders[msg.sender]._bidder = msg.sender;
+    }
+
+    function revealBid(
+        uint bidAmt,
+        string calldata secretSalt
+    ) external canReveal revealPhasestart revealPhase {
+        bytes32 _hashBidAmt = getHash(bidAmt);
+        require(
+            keccak256(abi.encodePacked(_hashBidAmt, secretSalt)) ==
+                _bidders[msg.sender]._bidHash,
+            "bid amount and salt doesnot match !!!"
+        );
+        _bidders[msg.sender]._isReveled = true;
+        _bidders[msg.sender]._bidamount = bidAmt;
+    }
+
+
 
     function getAuctionWinner() public payable {
         require(
