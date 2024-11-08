@@ -107,7 +107,7 @@ contract Auction {
         address _maxbidder = _bidders[0];
         address _secondlastelement;
         if (_length == 1) {
-            _winner = _bidders[0];
+            _winner = payable(_bidders[0]);
             _amount_to_be_paid = _biddetails[_winner]._bidamount;
         } else {
             for (uint256 i = 1; i < _length; ++i) {
