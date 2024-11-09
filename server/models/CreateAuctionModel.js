@@ -13,7 +13,7 @@ const AuctionSchema = new mongoose.Schema({
     start_of_auction: Date,
     isCommitEnabled: {
         type: Boolean,
-        default: false
+        default: true
     },
     isRevealEnabled: {
         type: Boolean,
