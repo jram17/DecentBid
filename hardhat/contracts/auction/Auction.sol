@@ -55,6 +55,10 @@ contract Auction {
             _biddetails[msg.sender]._hasBid == false,
             "you have already bid!!!"
         );
+        require(
+            _biddetails[msg.sender]._hasBid == false,
+            "you have already bid!!!"
+        );
         _;
     }
     modifier canReveal() {
@@ -73,6 +77,7 @@ contract Auction {
     // function getHash(uint _amt) public pure returns (bytes32) {
     //     return keccak256(abi.encodePacked(_amt));
     // }
+
     function payminAmount() public payable {
         require(msg.value == _minamount, "Less than the minimum amount");
 

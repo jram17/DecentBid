@@ -70,6 +70,19 @@
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "auctionId",
+          "type": "string"
+        }
+      ],
+      "name": "payminamount",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
     }
   ]
 }
