@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import ContractJson from '../../contractDetails.json';
+import ContractJson from '../../contract.json';
 
 
 const CreateAuction = async (value, auctionId) => {
