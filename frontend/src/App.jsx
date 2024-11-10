@@ -15,13 +15,62 @@ import CreateAuction from './pages/CreateAuction';
 import Auctions from './pages/Auctions';
 import '@fontsource-variable/reddit-sans';
 import AuctionDetails from './pages/AuctionDetails';
+import Profile from './pages/Profile';
+import UserAuctions from './pages/UserAuctions';
+import OwningAuctions from './pages/OwningAuctions';
+import AuthProvider from './providers/AuthProvider';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route index element={<Home />} />
-      <Route path="/create-auction" element={<CreateAuction />} />
-      <Route path="/auctions" element={<Auctions />} />
-      <Route path="/auctions/:id" element={<AuctionDetails />} />
+      <Route
+        path="/create-auction"
+        element={
+          <AuthProvider>
+            <CreateAuction />
+          </AuthProvider>
+        }
+      />
+      <Route
+        path="/auctions"
+        element={
+          <AuthProvider>
+            <Auctions />
+          </AuthProvider>
+        }
+      />
+      <Route
+        path="/auctions/:id"
+        element={
+          <AuthProvider>
+            <AuctionDetails />
+          </AuthProvider>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <AuthProvider>
+            <Profile />
+          </AuthProvider>
+        }
+      />
+      <Route
+        path="/auctions/user-auctions"
+        element={
+          <AuthProvider>
+            <UserAuctions />
+          </AuthProvider>
+        }
+      />
+      <Route
+        path="/auctions/owning-auctions"
+        element={
+          <AuthProvider>
+            <OwningAuctions />
+          </AuthProvider>
+        }
+      />
     </Route>
   )
 );

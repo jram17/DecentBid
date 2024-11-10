@@ -1,7 +1,100 @@
 import React from 'react';
-
+import logo from '../../../public/DecAuction.svg';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '../ui/badge';
+import { useSelector } from 'react-redux';
+import { AddressUtils } from '@/utils/AddressUtils';
 const Header = () => {
-  return <div></div>;
+  const navigate = useNavigate();
+  const useraddress = useSelector((state) => state.address.address);
+  return (
+    <div className="min-w-[100vw] h-[69px] fixed border-b-[0.8px] border-solid border-gray-300 bg-white z-10 flex items-center justify-between px-10">
+      <div
+        className="flex items-center justify-center hover:cursor-pointer"
+        onClick={() => navigate('/')}
+      >
+        <img src={logo} alt="Logo" className="w-[50px] h-[50px] mr-3" />
+        <div className="text-[#002B5B] font-semibold text-2xl -mt-2">
+          DecAuction
+        </div>
+      </div>
+
+      <div className="flex space-x-3">
+        <Button
+          variant="link"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate('/create-auction');
+          }}
+        >
+          <span className="text-gray-600 hover:text-gray-600 text-base">
+            Create Auction
+          </span>
+        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="link" className="text-gray-600 text-base">
+              Auctions
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Button
+                  variant="link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/auctions/owning-auctions');
+                  }}
+                >
+                  <span className="text-gray-600 hover:text-gray-600 text-sm">
+                    Owning
+                  </span>
+                </Button>{' '}
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Button
+                  variant="link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/auctions/user-auctions');
+                  }}
+                >
+                  <span className="text-gray-600 hover:text-gray-600 text-sm">
+                    Participating
+                  </span>
+                </Button>{' '}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <Button
+          variant="link"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate('/profile');
+          }}
+        >
+          <span className="text-gray-600 hover:text-gray-600 text-base">
+            Profile
+          </span>
+        </Button>
+        <Badge>
+          {useraddress ? AddressUtils(useraddress) : 'No Account connected'}
+        </Badge>
+      </div>
+    </div>
+  );
 };
 
 export default Header;
