@@ -31,7 +31,11 @@ contract Main {
         auction.payminAmount();
     }
 
-    function signCommit(string memory auctionId,bytes32 amtHash,string memory secretSalt) public payable {
+    function signCommit(
+        string memory auctionId,
+        bytes32 amtHash,
+        string memory secretSalt
+    ) public payable {
         Auction auction = _auctiondetails[auctionId];
         auction.commit(amtHash, secretSalt);
     }
@@ -42,7 +46,11 @@ contract Main {
         auction.payCommitBidAmount();
     }
 
-    function signReveal(string memory auctionId ,uint bidAmt, string memory secretSalt) public payable {
+    function signReveal(
+        string memory auctionId,
+        uint bidAmt,
+        string memory secretSalt
+    ) public payable {
         Auction auction = _auctiondetails[auctionId];
         auction.revealBid(bidAmt, secretSalt);
     }
