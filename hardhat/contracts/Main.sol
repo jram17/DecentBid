@@ -25,4 +25,9 @@ contract Main {
 
         _auctiondetails[auctionId] = _auction;
     }
+
+    function payminamount(string memory auctionId) public payable {
+        Auction auction = _auctiondetails[auctionId];
+        auction.payminAmount();
+    }
 }

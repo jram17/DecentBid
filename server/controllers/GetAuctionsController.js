@@ -3,7 +3,7 @@ const AuctionDetails = require('../models/CreateAuctionModel');
 
 const getAuctions = async (req, res) => {
     try {
-        const auctions = await AuctionDetails.find({});
+        const auctions = await AuctionDetails.find({ isWinnerAnnounced: false });
         res.status(200).json(auctions);
     } catch (error) {
         console.error(error);
