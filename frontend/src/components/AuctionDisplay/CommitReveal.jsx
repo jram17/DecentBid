@@ -41,8 +41,10 @@ const CommitReveal = ({ props }) => {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
+      const value = ethers.utils.parseEther(minAmount.toString());
+      console.log(value);
       const tx = await contract.payminamount(id, {
-        value: ethers.utils.parseEther(minAmount.toString()),
+        value: value,
       });
 
       await tx.wait();

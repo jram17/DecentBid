@@ -6,6 +6,12 @@ contract Auction {
     event unRevealed(address indexed bidder, string indexed _auctionid);
     event Winner(address indexed winner, string indexed _auctionid);
 
+    event BidCommitted(
+        address indexed bidder,
+        bytes32 bidHash,
+        string auctionId
+    );
+
     struct BidDetails {
         bytes32 _bidHash;
         string _secretSalt;
@@ -15,15 +21,12 @@ contract Auction {
     }
 
     address payable[] _bidders;
-    uint256 _minamount;
+    uint256 public _minamount;
     address payable _auctionowner;
     string _auctionid;
     mapping(address => BidDetails) _biddetails;
     uint256 _amount_to_be_paid;
     address payable _winner;
-
-    // uint private commitEndTime;
-    // uint private revealEndTime;
 
     constructor(
         uint256 minamount,
@@ -32,23 +35,8 @@ contract Auction {
         _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
         _minamount = minamount;
-        // commitEndTime = block.timestamp + commitTime;
-        // revealEndTime = commitEndTime + revealTime;
+
     }
-
-    // modifier commitPhase(){
-    //     require(block.timestamp < commitEndTime && block.timestamp>=block.timestamp-1 ,"commit phase is over");
-    //     _;
-    // }
-
-    // modifier revealPhase(){
-    //     require( block.timestamp < revealEndTime, "reveal phase is over");
-    //     _;
-    // }
-    // modifier revealPhasestart(){
-    //     require(block.timestamp > commitEndTime, "reveal phase dint start");
-    //     _;
-    // }
 
     modifier canBid() {
         require(
@@ -68,18 +56,21 @@ contract Auction {
     function commitBid(bytes32 _secretBid) private {
         _biddetails[msg.sender]._hasBid = true;
         _biddetails[msg.sender]._bidHash = _secretBid;
-        console.log("heree");
+
+        emit BidCommitted(msg.sender, _secretBid, _auctionid);
+        console.log(_biddetails[msg.sender]._hasBid);
     }
 
-    // function getHash(uint _amt) public pure returns (bytes32) {
-    //     return keccak256(abi.encodePacked(_amt));
-    // }
 
-    function payminAmount() public payable {
-        require(msg.value == _minamount, "Less than the minimum amount");
-
-        (bool sent, ) = _auctionowner.call{value: msg.value}("");
+    function payminAmount(uint256 _amount) public payable { 
+        console.log("here1");
+        console.log(msg.value);
+        require(_amount == _minamount, "Less than the minimum amount");
+        console.log("here2");
+        (bool sent, ) = _auctionowner.call{value: _amount}("");
+        console.log("here3");
         require(sent, "Failed to send Ether");
+        console.log("here4");
     }
 
     function payCommitBidAmount() public payable {
@@ -91,6 +82,7 @@ contract Auction {
         bytes32 bidAmt,
         string calldata secretSalt
     ) external canBid {
+        console.log("commit function called");
         commitBid(keccak256(abi.encodePacked(bidAmt, secretSalt)));
         _bidders.push(payable(msg.sender));
     }
