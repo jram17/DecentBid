@@ -12,8 +12,6 @@ contract Main {
         Owner = payable(msg.sender);
     }
 
-
-
     function createAuction(
         uint256 _minamount,
         string memory auctionId
@@ -31,5 +29,21 @@ contract Main {
     function payminamount(string memory auctionId) public payable {
         Auction auction = _auctiondetails[auctionId];
         auction.payminAmount();
+    }
+
+    function signCommit(string memory auctionId,bytes32 amtHash,string memory secretSalt) public payable {
+        Auction auction = _auctiondetails[auctionId];
+        auction.commit(amtHash, secretSalt);
+    }
+
+    function payCommitBid(string memory auctionId) public payable {
+        console.log("inn");
+        Auction auction = _auctiondetails[auctionId];
+        auction.payCommitBidAmount();
+    }
+
+    function signReveal(string memory auctionId ,uint bidAmt, string memory secretSalt) public payable {
+        Auction auction = _auctiondetails[auctionId];
+        auction.revealBid(bidAmt, secretSalt);
     }
 }

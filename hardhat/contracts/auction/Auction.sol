@@ -55,10 +55,6 @@ contract Auction {
             _biddetails[msg.sender]._hasBid == false,
             "you have already bid!!!"
         );
-        require(
-            _biddetails[msg.sender]._hasBid == false,
-            "you have already bid!!!"
-        );
         _;
     }
     modifier canReveal() {
@@ -72,6 +68,7 @@ contract Auction {
     function commitBid(bytes32 _secretBid) private {
         _biddetails[msg.sender]._hasBid = true;
         _biddetails[msg.sender]._bidHash = _secretBid;
+        console.log("heree");
     }
 
     // function getHash(uint _amt) public pure returns (bytes32) {
@@ -81,6 +78,11 @@ contract Auction {
     function payminAmount() public payable {
         require(msg.value == _minamount, "Less than the minimum amount");
 
+        (bool sent, ) = _auctionowner.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+    }
+
+    function payCommitBidAmount() public payable {
         (bool sent, ) = _auctionowner.call{value: msg.value}("");
         require(sent, "Failed to send Ether");
     }
