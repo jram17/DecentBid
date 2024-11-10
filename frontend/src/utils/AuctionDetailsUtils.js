@@ -24,5 +24,10 @@ const getCreatedDates = (date) => {
     return dateObj.toLocaleDateString('en-GB', options);
 };
 
+const IdUtils = (apartment_id) => {
 
-export { getCreatedDates, toTitleCase };
+    return `${apartment_id.slice(0, 5)}...${apartment_id.slice(-5)}`;
+}
+
+
+export { getCreatedDates, toTitleCase, IdUtils };

@@ -3,7 +3,9 @@ const UserAuctions = require('../models/UserAuctionsModel')
 
 const getAuctions = async (req, res) => {
     try {
-        const auctions = await AuctionDetails.find({ isWinnerAnnounced: false });
+        const auctions = await AuctionDetails.find({ isWinnerAnnounced: false }).sort({
+            "timestamp": -1
+        });
         res.status(200).json(auctions);
     } catch (error) {
         console.error(error);
@@ -18,7 +20,9 @@ const auctionDetails = async (req, res) => {
             return res.status(400).json({ message: 'Auction ID is required' });
         }
 
-        const auction = await AuctionDetails.findOne({ auctionId: id });
+        const auction = await AuctionDetails.findOne({ auctionId: id }).sort({
+            "timestamp": -1
+        });
 
         if (!auction) {
             return res.status(400).json({ message: 'Auction not found' });
