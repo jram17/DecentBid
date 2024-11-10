@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+import { useForm } from 'react-hook-form';
 import { ethers } from "ethers";
 import ContractJson from '@/../contractDetails.json';
 
@@ -32,7 +32,7 @@ const CommitReveal = ({ props }) => {
     const [commitStatus, setCommitStatus] = useState(false);
     const [revealStatus, setRevealStatus] = useState(false);
     const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
-
+    const form=useForm();
     console.log(id);
     async function payMinAmount() {
         const signer = await connectWallet();
@@ -87,11 +87,19 @@ const CommitReveal = ({ props }) => {
 
                 {/* for that first go this url:https://keccak-256.4tools.net/  enter your bid */}
                 {/* now copy the bid and come back to our website   */}
-{/* 
+                {/* 
                 now in the form enter the bid hash for the bid amt field
                 and enter the secret salt ,the salt  maybe a number or string
                 then write code to open meta mask and pay the bid amout 
                 make sure you pay the correct amt */}
+
+                {/* <form >
+                    <input type="text" placeholder='BID amount' />
+                    <input type="text" placeholder='Secret Salt' />
+                    <button type='submit'>COMMIT BID</button>
+                </form> */}
+
+
 
 
 
