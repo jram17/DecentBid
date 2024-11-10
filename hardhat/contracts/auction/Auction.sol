@@ -27,10 +27,8 @@ contract Auction {
 
     constructor(
         uint256 minamount,
-        string memory auctionId
-    ) // uint256 commitTime,
-    // uint256 revealTime
-    {
+        string memory auctionId // uint256 commitTime, // uint256 revealTime
+    ) {
         _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
         _minamount = minamount;
@@ -57,6 +55,10 @@ contract Auction {
             _biddetails[msg.sender]._hasBid == false,
             "you have already bid!!!"
         );
+        require(
+            _biddetails[msg.sender]._hasBid == false,
+            "you have already bid!!!"
+        );
         _;
     }
     modifier canReveal() {
@@ -64,11 +66,6 @@ contract Auction {
             _biddetails[msg.sender]._hasRevealed == false,
             "you have already bid!!!"
         );
-        _;
-    }
-
-    modifier onlyBidder(){
-        require(msg.sender==_auctionowner, "Only bidders can bid");
         _;
     }
 
@@ -83,6 +80,7 @@ contract Auction {
 
     function payminAmount() public payable {
         require(msg.value == _minamount, "Less than the minimum amount");
+
         (bool sent, ) = _auctionowner.call{value: msg.value}("");
         require(sent, "Failed to send Ether");
     }
@@ -90,7 +88,7 @@ contract Auction {
     function commit(
         bytes32 bidAmt,
         string calldata secretSalt
-    ) external canBid onlyBidder {
+    ) external canBid {
         commitBid(keccak256(abi.encodePacked(bidAmt, secretSalt)));
         _bidders.push(payable(msg.sender));
     }
@@ -98,7 +96,7 @@ contract Auction {
     function revealBid(
         uint bidAmt,
         string calldata secretSalt
-    ) external canReveal onlyBidder{
+    ) external canReveal {
         // bytes32 _hashBidAmt = getHash(bidAmt);
         bytes32 _hashBidAmt = keccak256(abi.encodePacked(bidAmt));
         require(
