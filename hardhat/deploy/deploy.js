@@ -21,7 +21,7 @@ async function main() {
     };
 
     try {
-        fs.writeFileSync(path.join(__dirname, '../../frontend/contractDetails.json'), JSON.stringify(contractDetails, null, 2));
+        fs.writeFileSync(path.join(__dirname, '../../frontend/contract.json'), JSON.stringify(contractDetails, null, 2));
     } catch (error) {
         console.error('Error writing contract details to file:', error);
     }
