@@ -8,9 +8,10 @@
   },
   "scripts": {
     "compile": "npx hardhat compile && cd .. && cd server && npm run start",
-    "deploy": "npx hardhat run ./deploy/deploy.js",
+    "deploy": "npx hardhat run ./deploy/deploy.js ",
     "localnode": "npx hardhat node",
-    "start": "concurrently \"npm run compile\" \"npm run localnode\" \"npm run deploy\" "
+    "start": "concurrently \"npm run compile\" \"npm run localnode\" ",
+    "deploy": "npx hardhat run ./deploy/deploy.js --network localhost"
   },
   "eslintConfig": {
     "extends": [

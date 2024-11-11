@@ -5,11 +5,13 @@ import "./auction/Auction.sol";
 import "hardhat/console.sol";
 
 contract Main {
-    struct AuctionHistory{
+    event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
+    struct AuctionHistory {
+        address payable contract_address;
         address payable owner;
         Auction auction;
     }
-    mapping(string =>AuctionHistory ) public _auctiondetails;
+    mapping(string => AuctionHistory) public _auctiondetails;
     address payable public Owner;
 
     constructor() {
@@ -20,7 +22,6 @@ contract Main {
         uint256 _minamount,
         string memory auctionId
     ) public payable {
-        console.log(_minamount);
         require(msg.value > 0, "Payment must be greater than zero");
 
         (bool sent, ) = Owner.call{value: msg.value}("");
@@ -28,20 +29,17 @@ contract Main {
 
         Auction _auction = new Auction(_minamount, auctionId);
         _auctiondetails[auctionId].owner = payable(msg.sender);
+        _auctiondetails[auctionId].contract_address = payable(
+            address(_auction)
+        );
         _auctiondetails[auctionId].auction = _auction;
     }
     
     function payminamount(string memory auctionId) public payable {
-        _auctiondetails[auctionId].owner.transfer(msg.value);  
+        (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
+            value: msg.value
+        }("");
+        require(sent, "Failed to pay the minimum amount");
+        emit BaseAmountPayEvent(msg.sender, auctionId);
     }
-    function payCommitBid(string memory auctionId) public payable {
-        _auctiondetails[auctionId].owner.transfer(msg.value);  
-    }
-    function signCommit(string memory auctionId , bytes32 bidAmt, string memory secretSalt) public payable {
-         _auctiondetails[auctionId].auction.commit(bidAmt, secretSalt);
-    }
-    function signReveal(string memory auctionId,uint bidAmt, string memory secretSalt) public payable {
-        _auctiondetails[auctionId].auction.revealBid(bidAmt, secretSalt);
-    }
-
 }
