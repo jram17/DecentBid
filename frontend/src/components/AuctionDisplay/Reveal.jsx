@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { BigNumber, ethers } from 'ethers';
 import ContractJson from '@/../contract.json';
-const Reveal = ({ connectWallet, id, setRevealStatus }) => {
+const Reveal = ({ connectWallet, id }) => {
   const {
     register,
     handleSubmit,
@@ -23,7 +23,6 @@ const Reveal = ({ connectWallet, id, setRevealStatus }) => {
     try {
       const tx = await contract.signReveal(id, bidAmountInWei, secretSalt);
       await tx.wait();
-      setRevealStatus(false);
 
       alert('Reveal successfull!!');
     } catch (error) {

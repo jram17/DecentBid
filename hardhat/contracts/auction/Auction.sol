@@ -3,9 +3,11 @@ pragma solidity ^0.8.3;
 import "hardhat/console.sol";
 
 contract Auction {
-    receive () external payable{}
+    receive() external payable {}
+
     event unRevealed(address indexed bidder, string indexed _auctionid);
     event Winner(address indexed winner, string indexed _auctionid);
+    event BidCommitted(address indexed bidder, string indexed auctionId);
 
     event BidCommitted(
         address indexed bidder,
@@ -28,17 +30,15 @@ contract Auction {
     mapping(address => BidDetails) _biddetails;
     uint256 _amount_to_be_paid;
     address payable _winner;
-    address public _auctionCreator;
 
     constructor(
         uint256 minamount,
-        string memory auctionId ,
+        string memory auctionId,
         address auctionCreator
     ) {
-        _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
         _minamount = minamount;
-        _auctionCreator = auctionCreator;
+        _auctionowner = payable(auctionCreator);
     }
 
     modifier canBid() {
@@ -55,6 +55,7 @@ contract Auction {
         );
         _;
     }
+
     // modifier onlyBidder(address bidderAddress){
     //     console.log("auction owner address:",_auctionCreator);
     //     console.log("senders address:",bidderAddress);
@@ -62,14 +63,12 @@ contract Auction {
     //     _;
     // }
 
-    function commitBid(bytes32 _secretBid) private {
-        _biddetails[msg.sender]._hasBid = true;
-        _biddetails[msg.sender]._bidHash = _secretBid;
-        emit BidCommitted(msg.sender, _secretBid, _auctionid);
+    function commitBid(bytes32 _secretBid, address _address) private {
+        _biddetails[_address]._hasBid = true;
+        _biddetails[_address]._bidHash = _secretBid;
+        emit BidCommitted(_address, _auctionid);
         // console.log(_biddetails[msg.sender]._hasBid);
     }
-
-
 
     // function payminAmount(uint256 _amount) public payable {
     //     console.log("here1");
@@ -88,20 +87,15 @@ contract Auction {
     //     require(sent, "Failed to send Ether");
     // }
 
-    function commit(
-        bytes32 bidAmt,
-        string calldata secretSalt
-    
-    ) external canBid {
+    function commit(address _address, bytes32 hash) external canBid {
         // console.log("commit function called");
-        commitBid(keccak256(abi.encodePacked(bidAmt, secretSalt)));
-        _bidders.push(payable(msg.sender));
+        commitBid(hash, _address);
+        _bidders.push(payable(_address));
     }
 
     function revealBid(
         uint bidAmt,
         string calldata secretSalt
-    
     ) external canReveal {
         // bytes32 _hashBidAmt = getHash(bidAmt);
         bytes32 _hashBidAmt = keccak256(abi.encodePacked(bidAmt));

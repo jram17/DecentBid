@@ -22,10 +22,9 @@ async function connectWallet() {
 }
 
 const CommitReveal = ({ props }) => {
-  const { auctionDetails, id } = props;
-  const [paidEntry, setPaidEntry] = useState(true);
-  const [commitStatus, setCommitStatus] = useState(false);
-  const [revealStatus, setRevealStatus] = useState(false);
+  const { auctionDetails, id, isBasePaid } = props;
+  console.log(auctionDetails, id);
+
   // const [auctionResult, setAuctionResult] = useState(false);
   const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
 
@@ -55,7 +54,7 @@ const CommitReveal = ({ props }) => {
     }
   }
 
-  if (paidEntry) {
+  if (!isBasePaid) {
     return (
       <div>
         <h1>
@@ -66,7 +65,7 @@ const CommitReveal = ({ props }) => {
       </div>
     );
   }
-  if (commitStatus) {
+  if (isCommitEnabled) {
     return (
       <Commit
         connectWallet={connectWallet}
@@ -77,7 +76,7 @@ const CommitReveal = ({ props }) => {
     );
   }
 
-  if (revealStatus) {
+  if (isRevealEnabled) {
     return (
       <Reveal
         connectWallet={connectWallet}

@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { BigNumber, ethers } from 'ethers';
 import ContractJson from '@/../contract.json';
-const Commit = ({ connectWallet, id, setCommitStatus, setRevealStatus }) => {
+const Commit = ({ connectWallet, id }) => {
   const {
     register,
     handleSubmit,
@@ -18,10 +18,9 @@ const Commit = ({ connectWallet, id, setCommitStatus, setRevealStatus }) => {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      const tx = await contract.payCommitBid(id, {});
+      const tx = await contract.payCommitBidAmount(id, {});
       await tx.wait();
-      setCommitStatus(false);
-      setRevealStatus(true);
+
       alert('successfully paid commit bid!!');
     } catch (error) {
       console.error('could not commit the bid amt', error);
