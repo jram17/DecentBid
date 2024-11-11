@@ -1,17 +1,40 @@
 import React, { useState } from 'react';
-
-import axios from 'axios';
 import { toTitleCase } from '@/utils/AuctionDetailsUtils';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
-
+import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
 function JoinRoomModal({ auction }) {
-  console.log(auction);
+  const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [error, setErrorMsg] = useState('');
-  const navigate = useNavigate();
-
+  const enableRevealPhase = async (id) => {
+    if (isLoading) return;
+    try {
+      setLoading(true);
+      const response = await axios.put(`/auctions/enable-reveal/${id}`);
+      if (response.status === 200) {
+        setError(false);
+        setErrorMsg('');
+        setLoading(false);
+        toast({
+          title: 'Reveal phase enabled successfully',
+        });
+      } else {
+        setError(true);
+        setErrorMsg('Failed to enable reveal phase.');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setError(true);
+      setErrorMsg('Failed to enable reveal phase.');
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="grid w-full items-center px-4 sm:justify-center border-none shadow-none font-form  justify-center">
       <div className="card w-full max-sm:w-96 p-6 border-none shadow-none max-h-inherit max-lg:px-0 flex flex-col items-center h-full justify-center gap-6">
@@ -44,10 +67,17 @@ function JoinRoomModal({ auction }) {
           </div>
         </div>
         <div className="card-content grid gap-x-3 grid-cols-3 w-full">
-          <Button>Start Reveal Phase</Button>
+          <Button
+            onClick={() => {
+              return enableRevealPhase(auction.auctionid);
+            }}
+          >
+            Start Reveal Phase
+          </Button>
           <Button>Announce Winner</Button>
           <Button>Transfer Amount</Button>
         </div>
+        {isError && <p className=" form-message">{error}</p>}
       </div>
     </div>
   );

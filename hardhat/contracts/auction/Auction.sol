@@ -57,18 +57,6 @@ contract Auction {
         _biddetails[msg.sender]._bidHash = _secretBid;
 
         emit BidCommitted(msg.sender, _secretBid, _auctionid);
-        console.log(_biddetails[msg.sender]._hasBid);
-    }
-
-    function payminAmount(uint256 _amount) public payable {
-        console.log("here1");
-        console.log(msg.value);
-        require(_amount == _minamount, "Less than the minimum amount");
-        console.log("here2");
-        (bool sent, ) = _auctionowner.call{value: _amount}("");
-        console.log("here3");
-        require(sent, "Failed to send Ether");
-        console.log("here4");
     }
 
     function payCommitBidAmount() public payable {
@@ -80,7 +68,6 @@ contract Auction {
         bytes32 bidAmt,
         string calldata secretSalt
     ) external canBid {
-        console.log("commit function called");
         commitBid(keccak256(abi.encodePacked(bidAmt, secretSalt)));
         _bidders.push(payable(msg.sender));
     }

@@ -31,7 +31,6 @@ const CommitReveal = ({ props }) => {
 
   // const { register, handleSubmit, formState: { errors } } = useForm();
 
-  console.log(id);
   async function payMinAmount() {
     const signer = await connectWallet();
     if (!signer) return;
@@ -42,7 +41,6 @@ const CommitReveal = ({ props }) => {
 
     try {
       const value = ethers.utils.parseEther(minAmount.toString());
-      console.log(value);
       const tx = await contract.payminamount(id, {
         value: value,
       });

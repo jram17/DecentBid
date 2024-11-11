@@ -10,7 +10,6 @@ const DataTable = ({ data }) => {
   const [selectedAuction, setSelectedAuction] = useState(null);
 
   const showDialog = (auction) => {
-    console.log(isDialogVisible);
     if (isDialogVisible) return;
     setSelectedAuction(auction);
     setIsDialogVisible(true);

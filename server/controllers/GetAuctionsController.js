@@ -106,4 +106,39 @@ const getOwningAuctions = async (req, res) => {
 }
 
 
-module.exports = { auctionDetails, getAuctions, getOwningAuctions, updatingUserAuctions, userAuctions };
+const updateRevealPhase = async (req, res) => {
+    try {
+
+
+        const { id: auctionId } = req.params;
+
+        if (!auctionId) {
+            return res.status(400).json({ message: 'Auction ID is required' });
+        }
+
+        const auction = await AuctionDetails.findOne({ auctionId });
+
+        if (!auction) {
+            return res.status(404).json({ message: 'Auction not found' });
+        }
+
+        auction.isRevealEnabled = true;
+        auction.isCommitEnabled = false;
+        await auction.save();
+
+
+        res.status(200).json({
+            success: true,
+            message: 'Reveal phase enabled successfully',
+            auction,
+        });
+
+    } catch (error) {
+        console.error('Error enabling reveal phase:', error);
+        res.status(500).json({ message: 'An error occurred while enabling the reveal phase' });
+    }
+};
+
+
+
+module.exports = { auctionDetails, getAuctions, getOwningAuctions, updatingUserAuctions, userAuctions, updateRevealPhase };

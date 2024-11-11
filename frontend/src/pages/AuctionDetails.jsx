@@ -11,7 +11,6 @@ function AuctionDetails() {
   const fetchAuctionDetails = async () => {
     try {
       const response = await axios.get(`/auctions/${id}`);
-      console.log(response.data);
       SetDetails(response.data);
     } catch (error) {
       setisError(true);
@@ -34,12 +33,12 @@ function AuctionDetails() {
       </div>
     );
   return (
-    <div className='flex'>
-    <div className="w-8/12 h-full flex items-center">
-      <Auction props={auctionDetails} />
-    </div>
-    <div className="w-4/12 h-full flex items-center m-8">
-      <CommitReveal props={{auctionDetails,id}} />
+    <div className="flex">
+      <div className="w-8/12 h-full flex items-center">
+        <Auction props={auctionDetails} />
+      </div>
+      <div className="w-4/12 h-full flex items-center m-8">
+        <CommitReveal props={{ auctionDetails, id }} />
       </div>
     </div>
   );
