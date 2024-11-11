@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { BigNumber, ethers } from 'ethers';
 import ContractJson from '@/../contract.json';
-const Commit = ({ connectWallet, id }) => {
+const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
   const {
     register,
     handleSubmit,
@@ -20,7 +20,7 @@ const Commit = ({ connectWallet, id }) => {
     try {
       const tx = await contract.payCommitBidAmount(id, {});
       await tx.wait();
-
+      setIsRevealEnabled(true);
       alert('successfully paid commit bid!!');
     } catch (error) {
       console.error('could not commit the bid amt', error);
