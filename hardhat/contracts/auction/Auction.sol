@@ -3,12 +3,10 @@ pragma solidity ^0.8.27;
 import "hardhat/console.sol";
 
 contract Auction {
+    receive () external payable{}
     event unRevealed(address indexed bidder, string indexed _auctionid);
-    event Winner(
-        address indexed winner,
-        string indexed _auctionid,
-        uint256 _auctionfinalbid
-    );
+    event Winner(address indexed winner, string indexed _auctionid);
+
     event BidCommitted(
         address indexed bidder,
         bytes32 bidHash,
@@ -30,11 +28,17 @@ contract Auction {
     mapping(address => BidDetails) _biddetails;
     uint256 _amount_to_be_paid;
     address payable _winner;
+    address public _auctionCreator;
 
-    constructor(uint256 minamount, string memory auctionId) {
+    constructor(
+        uint256 minamount,
+        string memory auctionId ,
+        address auctionCreator
+    ) {
         _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
         _minamount = minamount;
+        _auctionCreator = auctionCreator;
     }
 
     modifier canBid() {
@@ -51,36 +55,45 @@ contract Auction {
         );
         _;
     }
+    // modifier onlyBidder(address bidderAddress){
+    //     console.log("auction owner address:",_auctionCreator);
+    //     console.log("senders address:",bidderAddress);
+    //     require(_auctionCreator != bidderAddress,"only bidder are allowed!!");
+    //     _;
+    // }
 
     function commitBid(bytes32 _secretBid) private {
         _biddetails[msg.sender]._hasBid = true;
         _biddetails[msg.sender]._bidHash = _secretBid;
-
         emit BidCommitted(msg.sender, _secretBid, _auctionid);
-        console.log(_biddetails[msg.sender]._hasBid);
+        // console.log(_biddetails[msg.sender]._hasBid);
     }
 
-    function payminAmount(uint256 _amount) public payable {
-        console.log("here1");
-        console.log(msg.value);
-        require(_amount == _minamount, "Less than the minimum amount");
-        console.log("here2");
-        (bool sent, ) = _auctionowner.call{value: _amount}("");
-        console.log("here3");
-        require(sent, "Failed to send Ether");
-        console.log("here4");
-    }
 
-    function payCommitBidAmount() public payable {
-        (bool sent, ) = _auctionowner.call{value: msg.value}("");
-        require(sent, "Failed to send Ether");
-    }
+
+    // function payminAmount(uint256 _amount) public payable {
+    //     console.log("here1");
+    //     console.log(msg.value);
+    //     require(_amount == _minamount, "Less than the minimum amount");
+    //     console.log("here2");
+    //     (bool sent, ) = _auctionowner.call{value: _amount}("");
+    //     console.log("here3");
+    //     require(sent, "Failed to send Ether");
+    //     console.log("here4");
+    // }
+
+    // function payCommitBidAmount() public payable {
+    //     require(msg.sender != _auctionowner, " only bidder can participate in the auction!!");
+    //     (bool sent, ) = _auctionowner.call{value: msg.value}("");
+    //     require(sent, "Failed to send Ether");
+    // }
 
     function commit(
         bytes32 bidAmt,
         string calldata secretSalt
+    
     ) external canBid {
-        console.log("commit function called");
+        // console.log("commit function called");
         commitBid(keccak256(abi.encodePacked(bidAmt, secretSalt)));
         _bidders.push(payable(msg.sender));
     }
@@ -88,6 +101,7 @@ contract Auction {
     function revealBid(
         uint bidAmt,
         string calldata secretSalt
+    
     ) external canReveal {
         // bytes32 _hashBidAmt = getHash(bidAmt);
         bytes32 _hashBidAmt = keccak256(abi.encodePacked(bidAmt));
@@ -130,9 +144,8 @@ contract Auction {
         }
 
         _winner = payable(_maxbidder);
+        emit Winner(_winner, _auctionid);
         _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
-        emit Winner(_winner, _auctionid, _amount_to_be_paid);
-
         _auctionowner.transfer(_amount_to_be_paid);
     }
 
