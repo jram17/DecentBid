@@ -4,8 +4,11 @@ import "hardhat/console.sol";
 
 contract Auction {
     event unRevealed(address indexed bidder, string indexed _auctionid);
-    event Winner(address indexed winner, string indexed _auctionid);
-
+    event Winner(
+        address indexed winner,
+        string indexed _auctionid,
+        uint256 _auctionfinalbid
+    );
     event BidCommitted(
         address indexed bidder,
         bytes32 bidHash,
@@ -28,10 +31,7 @@ contract Auction {
     uint256 _amount_to_be_paid;
     address payable _winner;
 
-    constructor(
-        uint256 minamount,
-        string memory auctionId // uint256 commitTime, // uint256 revealTime
-    ) {
+    constructor(uint256 minamount, string memory auctionId) {
         _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
         _minamount = minamount;
@@ -130,8 +130,9 @@ contract Auction {
         }
 
         _winner = payable(_maxbidder);
-        emit Winner(_winner, _auctionid);
         _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
+        emit Winner(_winner, _auctionid, _amount_to_be_paid);
+
         _auctionowner.transfer(_amount_to_be_paid);
     }
 
