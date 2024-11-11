@@ -8,8 +8,7 @@ contract Main {
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
     event commitAmountPayEvent(
         address indexed bidder,
-        string indexed auctionId,
-        uint256 commitBidAmount
+        string indexed auctionId
     );
     struct AuctionHistory {
         address payable contract_address;
@@ -41,9 +40,9 @@ contract Main {
     }
 
     modifier onlyBidder(address bidderAddress, string memory auctionId) {
-        address auctioncreator = _auctiondetails[auctionId]
+        address payable auctioncreator = _auctiondetails[auctionId]
             .auction
-            ._auctionCreator();
+            ._auctionowner();
         console.log("auction owner address:", auctioncreator);
         console.log("senders address:", bidderAddress);
         require(auctioncreator != bidderAddress, "Only bidders are allowed!");
@@ -54,6 +53,7 @@ contract Main {
         string memory auctionId
     ) public payable onlyBidder(msg.sender, auctionId) {
         uint256 _minamount = _auctiondetails[auctionId].auction._minamount();
+        console.log(msg.value);
         require(msg.value == _minamount, "pay min amount!!");
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
@@ -74,7 +74,11 @@ contract Main {
         uint256 bidAmt,
         string memory secretSalt
     ) public payable onlyBidder(msg.sender, auctionId) {
-        _auctiondetails[auctionId].auction.revealBid(bidAmt, secretSalt);
+        _auctiondetails[auctionId].auction.revealBid(
+            msg.sender,
+            bidAmt,
+            secretSalt
+        );
     }
 
     function getHash(uint256 num) public pure returns (bytes32) {
@@ -82,13 +86,14 @@ contract Main {
     }
 
     function payCommitBidAmount(
-        string memory auctionId
+        string memory auctionId,
+        bytes32 hash
     ) public payable onlyBidder(msg.sender, auctionId) {
-        uint256 commitAmount = msg.value;
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
         }("");
         require(sent, "Failed to pay commitBid");
         emit commitAmountPayEvent(msg.sender, auctionId);
+        signCommit(auctionId, hash);
     }
 }

@@ -25,7 +25,7 @@ contract Auction {
 
     address payable[] _bidders;
     uint256 public _minamount;
-    address payable _auctionowner;
+    address payable public _auctionowner;
     string _auctionid;
     mapping(address => BidDetails) _biddetails;
     uint256 _amount_to_be_paid;
@@ -48,9 +48,9 @@ contract Auction {
         );
         _;
     }
-    modifier canReveal() {
+    modifier canReveal(address _address) {
         require(
-            _biddetails[msg.sender]._hasRevealed == false,
+            _biddetails[_address]._hasRevealed == false,
             "you have already bid!!!"
         );
         _;
@@ -94,18 +94,23 @@ contract Auction {
     }
 
     function revealBid(
+        address _address,
         uint bidAmt,
         string calldata secretSalt
-    ) external canReveal {
-        // bytes32 _hashBidAmt = getHash(bidAmt);
-        bytes32 _hashBidAmt = keccak256(abi.encodePacked(bidAmt));
+    ) external canReveal(_address) {
+        // Compute the hash of the bid amount and the secret salt together
+        bytes32 computedHash = keccak256(abi.encodePacked(bidAmt, secretSalt));
+
+        // Log the stored bid hash for debugging
+        // Check if the computed hash matches the stored bid hash
         require(
-            keccak256(abi.encodePacked(_hashBidAmt, secretSalt)) ==
-                _biddetails[msg.sender]._bidHash,
-            "bid amount and salt doesnot match !!!"
+            computedHash == _biddetails[_address]._bidHash,
+            "bid amount and salt do not match!!!"
         );
-        _biddetails[msg.sender]._hasRevealed = true;
-        _biddetails[msg.sender]._bidamount = bidAmt;
+
+        // Mark the bid as revealed and set the bid amount
+        _biddetails[_address]._hasRevealed = true;
+        _biddetails[_address]._bidamount = bidAmt;
     }
 
     function getAuctionWinner() public payable {
