@@ -22,14 +22,11 @@ async function connectWallet() {
 }
 
 const CommitReveal = ({ props }) => {
-  const { auctionDetails, id, isBasePaid } = props;
-  console.log(auctionDetails, id);
+  const { auctionDetails, id, isBasePaid, setisBasePaid } = props;
 
-  // const [auctionResult, setAuctionResult] = useState(false);
   const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
 
-  // const { register, handleSubmit, formState: { errors } } = useForm();
-
+  const [isRevealEnabled, setIsRevealEnabled] = useState(false);
   async function payMinAmount() {
     const signer = await connectWallet();
     if (!signer) return;
@@ -44,9 +41,8 @@ const CommitReveal = ({ props }) => {
         value: value,
       });
 
-      await tx.wait();
-      setPaidEntry(false);
-      setCommitStatus(true);
+      const receipt = await tx.wait();
+      setisBasePaid(true);
       alert('Payment successful!!  Now you can commit your entry.');
     } catch (error) {
       console.error('Error while paying min amount', error);
@@ -65,26 +61,29 @@ const CommitReveal = ({ props }) => {
       </div>
     );
   }
-  if (isCommitEnabled) {
+  if (auctionDetails.isCommitEnabled && !isRevealEnabled) {
     return (
       <Commit
         connectWallet={connectWallet}
         id={id}
-        setCommitStatus={setCommitStatus}
-        setRevealStatus={setRevealStatus}
+        setIsRevealEnabled={setIsRevealEnabled}
       />
     );
   }
 
-  if (isRevealEnabled) {
-    return (
-      <Reveal
-        connectWallet={connectWallet}
-        id={id}
-        setRevealStatus={setRevealStatus}
-      />
-    );
-  }
+  auctionDetails.isRevealEnabled ? (
+    isBasePaid ? (
+      <Reveal connectWallet={connectWallet} id={id} />
+    ) : (
+      <div>
+        <h1>You didn&apos;t commit and the commit phase it over</h1>
+      </div>
+    )
+  ) : (
+    <div>
+      <h1>The auction is not in the reveal phase</h1>
+    </div>
+  );
 
   return (
     <div>
