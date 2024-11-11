@@ -25,7 +25,7 @@ contract Auction {
 
     address payable[] _bidders;
     uint256 public _minamount;
-    address payable _auctionowner;
+    address payable public _auctionowner;
     string _auctionid;
     mapping(address => BidDetails) _biddetails;
     uint256 _amount_to_be_paid;
@@ -41,71 +41,48 @@ contract Auction {
         _auctionowner = payable(auctionCreator);
     }
 
-    modifier canBid() {
+    modifier canBid(address bidderAddress) {
         require(
-            _biddetails[msg.sender]._hasBid == false,
+            _biddetails[bidderAddress]._hasBid == false,
             "you have already bid!!!"
         );
         _;
     }
-    modifier canReveal() {
+    modifier canReveal(address bidderAddress) {
         require(
-            _biddetails[msg.sender]._hasRevealed == false,
+            _biddetails[bidderAddress]._hasRevealed == false,
             "you have already bid!!!"
         );
         _;
     }
 
-    // modifier onlyBidder(address bidderAddress){
-    //     console.log("auction owner address:",_auctionCreator);
-    //     console.log("senders address:",bidderAddress);
-    //     require(_auctionCreator != bidderAddress,"only bidder are allowed!!");
-    //     _;
-    // }
+
 
     function commitBid(bytes32 _secretBid, address _address) private {
         _biddetails[_address]._hasBid = true;
         _biddetails[_address]._bidHash = _secretBid;
         emit BidCommitted(_address, _auctionid);
-        // console.log(_biddetails[msg.sender]._hasBid);
     }
 
-    // function payminAmount(uint256 _amount) public payable {
-    //     console.log("here1");
-    //     console.log(msg.value);
-    //     require(_amount == _minamount, "Less than the minimum amount");
-    //     console.log("here2");
-    //     (bool sent, ) = _auctionowner.call{value: _amount}("");
-    //     console.log("here3");
-    //     require(sent, "Failed to send Ether");
-    //     console.log("here4");
-    // }
 
-    // function payCommitBidAmount() public payable {
-    //     require(msg.sender != _auctionowner, " only bidder can participate in the auction!!");
-    //     (bool sent, ) = _auctionowner.call{value: msg.value}("");
-    //     require(sent, "Failed to send Ether");
-    // }
-
-    function commit(address _address, bytes32 hash) external canBid {
-        // console.log("commit function called");
-        commitBid(hash, _address);
-        _bidders.push(payable(_address));
+    function commit(address _bidderAddress, bytes32 hash) external canBid(_bidderAddress) {
+        commitBid(hash, _bidderAddress);
+        _bidders.push(payable(_bidderAddress));
     }
 
     function revealBid(
+        address bidderAddress,
         uint bidAmt,
         string calldata secretSalt
-    ) external canReveal {
-        // bytes32 _hashBidAmt = getHash(bidAmt);
-        bytes32 _hashBidAmt = keccak256(abi.encodePacked(bidAmt));
+    ) external canReveal(bidderAddress) {
+        bytes32 _hashBidAmt = keccak256(abi.encode(bidAmt));
         require(
-            keccak256(abi.encodePacked(_hashBidAmt, secretSalt)) ==
-                _biddetails[msg.sender]._bidHash,
+            keccak256(abi.encode(_hashBidAmt, secretSalt)) ==
+                _biddetails[bidderAddress]._bidHash,
             "bid amount and salt doesnot match !!!"
         );
-        _biddetails[msg.sender]._hasRevealed = true;
-        _biddetails[msg.sender]._bidamount = bidAmt;
+        _biddetails[bidderAddress]._hasRevealed = true;
+        _biddetails[bidderAddress]._bidamount = bidAmt;
     }
 
     function getAuctionWinner() public payable {
