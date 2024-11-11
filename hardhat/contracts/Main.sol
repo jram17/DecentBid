@@ -34,7 +34,7 @@ contract Main {
         );
         _auctiondetails[auctionId].auction = _auction;
     }
-
+    
     function payminamount(string memory auctionId) public payable {
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value

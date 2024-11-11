@@ -9,8 +9,7 @@
   "scripts": {
     "compile": "npx hardhat compile && cd .. && cd server && npm run start",
     "localnode": "npx hardhat node",
-    "start": "concurrently \"npm run compile\" \"npm run localnode\" ",
-    "deploy": "npx hardhat run ./deploy/deploy.js --network localhost"
+    "start": "concurrently \"npm run compile\" \"npm run localnode\" "
   },
   "eslintConfig": {
     "extends": [
