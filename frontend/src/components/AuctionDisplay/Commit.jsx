@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { BigNumber, ethers } from 'ethers';
 import ContractJson from '@/../contract.json';
 const Commit = ({ connectWallet, id, setCommitStatus, setRevealStatus }) => {
-  console.log(ContractJson);
   const {
     register,
     handleSubmit,
@@ -19,7 +18,6 @@ const Commit = ({ connectWallet, id, setCommitStatus, setRevealStatus }) => {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      console.log('hit');
       const tx = await contract.payCommitBid(id, {});
       await tx.wait();
       setCommitStatus(false);
@@ -32,7 +30,6 @@ const Commit = ({ connectWallet, id, setCommitStatus, setRevealStatus }) => {
   }
 
   const onSubmitCommitBid = async (data) => {
-    console.log('Form Data:', data);
     const { bidHash, secretSalt } = data;
 
     const signer = await connectWallet();

@@ -1,34 +1,86 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-const AuctionDialog = ({ auction }) => {
+import { toTitleCase } from '@/utils/AuctionDetailsUtils';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/button';
+import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
+function JoinRoomModal({ auction }) {
+  const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [error, setErrorMsg] = useState('');
+  const enableRevealPhase = async (id) => {
+    if (isLoading) return;
+    try {
+      setLoading(true);
+      const response = await axios.put(`/auctions/enable-reveal/${id}`);
+      if (response.status === 200) {
+        setError(false);
+        setErrorMsg('');
+        setLoading(false);
+        toast({
+          title: 'Reveal phase enabled successfully',
+        });
+      } else {
+        setError(true);
+        setErrorMsg('Failed to enable reveal phase.');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setError(true);
+      setErrorMsg('Failed to enable reveal phase.');
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    <Dialog>
-      <DialogTrigger>Edit Details</DialogTrigger>
-      <DialogContent className="w-full">
-        <DialogHeader className="flex flex-col gap-2">
-          <DialogTitle>Can Stage for the Auction</DialogTitle>
-          <DialogDescription>Auction :{auction.auctionname}</DialogDescription>
-          <DialogDescription>
-            Product :{auction.auctionproduct}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="w-full p-4 flex items-center justify-center">
-          <Button variant="primary">Start Reveal Phase</Button>
-          <Button variant="primary">End Auction</Button>
-          <Button variant="primary">Transfer Funds</Button>
+    <div className="grid w-full items-center px-4 sm:justify-center border-none shadow-none font-form  justify-center">
+      <div className="card w-full max-sm:w-96 p-6 border-none shadow-none max-h-inherit max-lg:px-0 flex flex-col items-center h-full justify-center gap-6">
+        <div className="card-header flex items-center justify-center gap-2  flex-col">
+          <div className="card-title flex items-center justify-center text-nowrap max-sm:text-lg font-title !text-2xl">
+            Edit Apartment Details
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+        <div className="car-content">
+          <div className="flex gap-3">
+            {' '}
+            <span className="min-w-[10vw]">Auction Id</span>
+            <span>{auction.auctionid}</span>
+          </div>
+          <div className="flex gap-3">
+            {' '}
+            <span className="min-w-[10vw]">Auction Name</span>
+            <span>{toTitleCase(auction.auctionname)}</span>
+          </div>
+          <div className="flex gap-3">
+            {' '}
+            <span className="min-w-[10vw]">Auction Status</span>
+            <span>
+              {auction.isRevealEnabled
+                ? 'Reveal Phase'
+                : auction.isWinnedAnnounced !== 'Yet to be Decided'
+                ? 'Winner Announced'
+                : 'Commit Phase'}
+            </span>
+          </div>
+        </div>
+        <div className="card-content grid gap-x-3 grid-cols-3 w-full">
+          <Button
+            onClick={() => {
+              return enableRevealPhase(auction.auctionid);
+            }}
+          >
+            Start Reveal Phase
+          </Button>
+          <Button>Announce Winner</Button>
+          <Button>Transfer Amount</Button>
+        </div>
+        {isError && <p className=" form-message">{error}</p>}
+      </div>
+    </div>
   );
-};
+}
 
-export default AuctionDialog;
+export default JoinRoomModal;

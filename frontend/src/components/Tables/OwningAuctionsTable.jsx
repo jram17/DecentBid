@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Space, Table, Tag } from 'antd';
+import AuctionDialog from '../AuctionDisplay/AuctionDialog';
+import { MdCancel } from 'react-icons/md';
 const DataTable = ({ data }) => {
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
   const [columns, setColumns] = useState([]);
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [selectedAuction, setSelectedAuction] = useState(null);
+
+  const showDialog = (auction) => {
+    if (isDialogVisible) return;
+    setSelectedAuction(auction);
+    setIsDialogVisible(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogVisible(false);
+    setSelectedAuction(null);
+  };
 
   useEffect(() => {
     setColumns([
@@ -89,6 +104,15 @@ const DataTable = ({ data }) => {
             : null,
         ellipsis: true,
       },
+      {
+        title: 'Actions',
+        key: 'actions',
+        render: (text, record) => (
+          <Button type="primary" onClick={() => showDialog(record)}>
+            View Details
+          </Button>
+        ),
+      },
     ]);
   }, [data, filteredInfo, sortedInfo]);
 
@@ -104,13 +128,27 @@ const DataTable = ({ data }) => {
   };
 
   return (
-    <>
+    <div className="flex flex-col items-center">
       <Space style={{ marginBottom: 16 }}>
         <Button onClick={clearFilters}>Clear filters</Button>
         <Button onClick={clearAll}>Clear filters and sorters</Button>
       </Space>
       <Table columns={columns} dataSource={data} onChange={handleChange} />
-    </>
+
+      {isDialogVisible && (
+        <div className="fixed top-1/4 left-0 right-0 flex justify-center z-50">
+          <div className="relative bg-white p-4 rounded-lg shadow-lg">
+            <span
+              className="absolute top-2 right-2 cursor-pointer"
+              onClick={() => handleDialogClose()}
+            >
+              <MdCancel size={20} />
+            </span>
+            <AuctionDialog auction={selectedAuction} />
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 export { DataTable };

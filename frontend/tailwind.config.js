@@ -7,7 +7,13 @@ export default {
 	], theme: {
 		extend: {
 			fontFamily: {
-				content: ['Reddit Sans Variable']
+				content: ['Reddit Sans Variable'],
+
+				header: ['Public Sans Variable', 'sans-serif'],
+				title: ['Faustina Variable', 'serif'],
+				form: ['Fira Code Variable', 'sans-serif'],
+				input: ['Nunito Variable', 'serif']
+
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
