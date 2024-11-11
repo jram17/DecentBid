@@ -30,29 +30,18 @@ contract Main {
         _auctiondetails[auctionId].owner = payable(msg.sender);
         _auctiondetails[auctionId].auction = _auction;
     }
-
+    
     function payminamount(string memory auctionId) public payable {
-        console.log("here1");
-        _auctiondetails[auctionId].owner.transfer(msg.value);  // This line is causing the error;;
-        console.log("here2", msg.value);
-        console.log("here3");
+        _auctiondetails[auctionId].owner.transfer(msg.value);  
+    }
+    function payCommitBid(string memory auctionId) public payable {
+        _auctiondetails[auctionId].owner.transfer(msg.value);  
+    }
+    function signCommit(string memory auctionId , bytes32 bidAmt, string memory secretSalt) public payable {
+         _auctiondetails[auctionId].auction.commit(bidAmt, secretSalt);
+    }
+    function signReveal(string memory auctionId,uint bidAmt, string memory secretSalt) public payable {
+        _auctiondetails[auctionId].auction.revealBid(bidAmt, secretSalt);
     }
 
-    
-
-    // function signCommit(string memory auctionId,bytes32 amtHash,string memory secretSalt) public payable {
-    //     Auction auction = _auctiondetails[auctionId];
-    //     auction.commit(amtHash, secretSalt);
-    // }
-
-    // function payCommitBid(string memory auctionId) public payable {
-    //     console.log("inn");
-    //     Auction auction = _auctiondetails[auctionId];
-    //     auction.payCommitBidAmount();
-    // }
-
-    // function signReveal(string memory auctionId ,uint bidAmt, string memory secretSalt) public payable {
-    //     Auction auction = _auctiondetails[auctionId];
-    //     auction.revealBid(bidAmt, secretSalt);
-    // }
 }

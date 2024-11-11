@@ -60,7 +60,7 @@ contract Auction {
         emit BidCommitted(msg.sender, _secretBid, _auctionid);
         console.log(_biddetails[msg.sender]._hasBid);
     }
-
+ 
 
     function payminAmount(uint256 _amount) public payable { 
         console.log("here1");

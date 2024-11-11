@@ -15,7 +15,11 @@ const Commit = ({ connectWallet , id , setCommitStatus , setRevealStatus}) => {
         const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
         try {
-            const tx = await contract.payCommitBid(id, {});
+            const commitAmt = 0.6; // this is the amount that the user entered in the form.
+            const value = ethers.utils.parseEther(commitAmt.toString());
+            const tx = await contract.payCommitBid(id,{
+                value:value,
+            });
             await tx.wait();
             setCommitStatus(false);
             setRevealStatus(true);
@@ -37,9 +41,9 @@ const Commit = ({ connectWallet , id , setCommitStatus , setRevealStatus}) => {
         const contractABI = ContractJson.abi;
         const contract = new ethers.Contract(contractAddress, contractABI, signer);
         // converting to bytes32
-        const bidHashBytes32 = ethers.utils.arrayify(bidHash);
+        
         try {
-            const tx = await contract.signCommit(id, bidHashBytes32, secretSalt);
+            const tx = await contract.signCommit(id, bidHash, secretSalt);
             await tx.wait()
             alert('commit successfull!!');
             payCommitAmount();
