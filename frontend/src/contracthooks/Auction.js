@@ -13,11 +13,14 @@ const CreateAuction = async (value, auctionId) => {
             ContractJson.abi,
             signer
         );
+
         const tx = await auctionContract.createAuction(
             wei, auctionId, {
             value: ethers.utils.parseEther(value.toString()),
         })
         await tx.wait();
+
+
         return {
             success: true,
             message: "Auction created successfully",

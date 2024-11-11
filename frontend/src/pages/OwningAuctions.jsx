@@ -28,6 +28,7 @@ const OwningAuctions = () => {
 
               auctions.push({
                 auctionId: IdUtils(auctionId),
+                auctionid: auctionId,
                 auctionname,
                 auctionproduct,
                 createdAt: getCreatedDates(createdAt),

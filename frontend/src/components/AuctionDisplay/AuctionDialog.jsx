@@ -1,34 +1,56 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-const AuctionDialog = ({ auction }) => {
-  const [isLoading, setLoading] = useState(false);
-  return (
-    <Dialog>
-      <DialogTrigger>Edit Details</DialogTrigger>
-      <DialogContent className="w-full">
-        <DialogHeader className="flex flex-col gap-2">
-          <DialogTitle>Can Stage for the Auction</DialogTitle>
-          <DialogDescription>Auction :{auction.auctionname}</DialogDescription>
-          <DialogDescription>
-            Product :{auction.auctionproduct}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="w-full p-4 flex items-center justify-center">
-          <Button variant="primary">Start Reveal Phase</Button>
-          <Button variant="primary">End Auction</Button>
-          <Button variant="primary">Transfer Funds</Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
-export default AuctionDialog;
+import axios from 'axios';
+import { toTitleCase } from '@/utils/AuctionDetailsUtils';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../ui/button';
+
+function JoinRoomModal({ auction }) {
+  console.log(auction);
+  const [isLoading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [error, setErrorMsg] = useState('');
+  const navigate = useNavigate();
+
+  return (
+    <div className="grid w-full items-center px-4 sm:justify-center border-none shadow-none font-form  justify-center">
+      <div className="card w-full max-sm:w-96 p-6 border-none shadow-none max-h-inherit max-lg:px-0 flex flex-col items-center h-full justify-center gap-6">
+        <div className="card-header flex items-center justify-center gap-2  flex-col">
+          <div className="card-title flex items-center justify-center text-nowrap max-sm:text-lg font-title !text-2xl">
+            Edit Apartment Details
+          </div>
+        </div>
+        <div className="car-content">
+          <div className="flex gap-3">
+            {' '}
+            <span className="min-w-[10vw]">Auction Id</span>
+            <span>{auction.auctionid}</span>
+          </div>
+          <div className="flex gap-3">
+            {' '}
+            <span className="min-w-[10vw]">Auction Name</span>
+            <span>{toTitleCase(auction.auctionname)}</span>
+          </div>
+          <div className="flex gap-3">
+            {' '}
+            <span className="min-w-[10vw]">Auction Status</span>
+            <span>
+              {auction.isRevealEnabled
+                ? 'Reveal Phase'
+                : auction.isWinnedAnnounced !== 'Yet to be Decided'
+                ? 'Winner Announced'
+                : 'Commit Phase'}
+            </span>
+          </div>
+        </div>
+        <div className="card-content grid gap-x-3 grid-cols-3 w-full">
+          <Button>Start Reveal Phase</Button>
+          <Button>Announce Winner</Button>
+          <Button>Transfer Amount</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default JoinRoomModal;
