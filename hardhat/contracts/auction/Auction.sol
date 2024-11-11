@@ -35,7 +35,6 @@ contract Auction {
         _auctionowner = payable(msg.sender);
         _auctionid = auctionId;
         _minamount = minamount;
-
     }
 
     modifier canBid() {
@@ -61,8 +60,7 @@ contract Auction {
         console.log(_biddetails[msg.sender]._hasBid);
     }
 
-
-    function payminAmount(uint256 _amount) public payable { 
+    function payminAmount(uint256 _amount) public payable {
         console.log("here1");
         console.log(msg.value);
         require(_amount == _minamount, "Less than the minimum amount");
