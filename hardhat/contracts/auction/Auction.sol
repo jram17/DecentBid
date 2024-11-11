@@ -26,6 +26,7 @@ contract Auction {
     address payable[] _bidders;
     uint256 public _minamount;
     address payable public _auctionowner;
+
     string _auctionid;
     mapping(address => BidDetails) _biddetails;
     uint256 _amount_to_be_paid;

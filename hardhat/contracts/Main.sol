@@ -52,6 +52,7 @@ contract Main {
         string memory auctionId
     ) public payable onlyBidder(msg.sender, auctionId) {
         uint256 _minamount = _auctiondetails[auctionId].auction._minamount();
+        console.log(msg.value);
         require(msg.value == _minamount, "pay min amount!!");
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
@@ -80,12 +81,14 @@ contract Main {
     }
 
     function payCommitBidAmount(
-        string memory auctionId
+        string memory auctionId,
+        bytes32 hash
     ) public payable onlyBidder(msg.sender, auctionId) {
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
         }("");
         require(sent, "Failed to pay commitBid");
         emit commitAmountPayEvent(msg.sender, auctionId);
+        signCommit(auctionId, hash);
     }
 }
