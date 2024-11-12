@@ -5,11 +5,14 @@ import "./auction/Auction.sol";
 import "hardhat/console.sol";
 
 contract Main {
+    event Winner(address indexed winner, string indexed _auctionid);
+
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
     event commitAmountPayEvent(
         address indexed bidder,
         string indexed auctionId
     );
+    event TransferStatus(bool status, string indexed auctionId);
     struct AuctionHistory {
         address payable contract_address;
         address payable owner;
@@ -40,12 +43,13 @@ contract Main {
     }
 
     modifier onlyBidder(address bidderAddress, string memory auctionId) {
-        address auctioncreator = _auctiondetails[auctionId].auction._auctionowner();
+        address auctioncreator = _auctiondetails[auctionId]
+            .auction
+            ._auctionowner();
         console.log("auction owner address:", auctioncreator);
         console.log("senders address:", bidderAddress);
         require(auctioncreator != bidderAddress, "Only bidders are allowed!");
         _;
-
     }
 
     function payminamount(
@@ -73,15 +77,21 @@ contract Main {
         uint256 bidAmt,
         string memory secretSalt
     ) public payable onlyBidder(msg.sender, auctionId) {
-        _auctiondetails[auctionId].auction.revealBid(msg.sender,bidAmt, secretSalt);
+        _auctiondetails[auctionId].auction.revealBid(
+            msg.sender,
+            bidAmt,
+            secretSalt
+        );
     }
 
-    function getHash(uint decimalValue,string memory secretSalt) public pure returns(bytes32) {
+    function getHash(
+        uint decimalValue,
+        string memory secretSalt
+    ) public pure returns (bytes32) {
         uint256 weiValue = decimalValue * 1e18;
         bytes32 _hashBidAmt = keccak256(abi.encode(weiValue));
-        return keccak256(abi.encode(_hashBidAmt,secretSalt));
+        return keccak256(abi.encode(_hashBidAmt, secretSalt));
     }
-
 
     function payCommitBidAmount(
         string memory auctionId,
@@ -93,5 +103,26 @@ contract Main {
         require(sent, "Failed to pay commitBid");
         emit commitAmountPayEvent(msg.sender, auctionId);
         signCommit(auctionId, hash);
+    }
+
+    function getWinner(string memory _auctionId) public {
+        require(
+            msg.sender == _auctiondetails[_auctionId].owner,
+            "Only the owner can trigger this function"
+        );
+        Auction auction = _auctiondetails[_auctionId].auction;
+
+        address payable _auctionwinner = auction.getAuctionWinner();
+        emit Winner(_auctionwinner, _auctionId);
+    }
+
+    function transferAmount(string memory _auctionId) external {
+        require(
+            msg.sender == _auctiondetails[_auctionId].owner,
+            "Only the owner can trigger this function"
+        );
+        Auction auction = _auctiondetails[_auctionId].auction;
+        bool status = auction.transferAmount();
+        emit TransferStatus(status, _auctionId);
     }
 }
