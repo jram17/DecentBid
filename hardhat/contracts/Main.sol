@@ -76,9 +76,12 @@ contract Main {
         _auctiondetails[auctionId].auction.revealBid(msg.sender,bidAmt, secretSalt);
     }
 
-    function getHash(uint256 num) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(num));
+    function getHash(uint decimalValue,string memory secretSalt) public pure returns(bytes32) {
+        uint256 weiValue = decimalValue * 1e18;
+        bytes32 _hashBidAmt = keccak256(abi.encode(weiValue));
+        return keccak256(abi.encode(_hashBidAmt,secretSalt));
     }
+
 
     function payCommitBidAmount(
         string memory auctionId,

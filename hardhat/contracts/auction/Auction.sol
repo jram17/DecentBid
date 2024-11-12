@@ -9,11 +9,7 @@ contract Auction {
     event Winner(address indexed winner, string indexed _auctionid);
     event BidCommitted(address indexed bidder, string indexed auctionId);
 
-    event BidCommitted(
-        address indexed bidder,
-        bytes32 bidHash,
-        string auctionId
-    );
+    event BidCommitted( address indexed bidder, bytes32 bidHash, string auctionId );
 
     struct BidDetails {
         bytes32 _bidHash;
@@ -32,51 +28,31 @@ contract Auction {
     uint256 _amount_to_be_paid;
     address payable _winner;
 
-    constructor(
-        uint256 minamount,
-        string memory auctionId,
-        address auctionCreator
-    ) {
+    constructor( uint256 minamount, string memory auctionId, address auctionCreator ) {
         _auctionid = auctionId;
         _minamount = minamount;
         _auctionowner = payable(auctionCreator);
     }
 
     modifier canBid(address bidderAddress) {
-        require(
-            _biddetails[bidderAddress]._hasBid == false,
-            "you have already bid!!!"
-        );
+        require( _biddetails[bidderAddress]._hasBid == false, "you have already bid!!!" );
         _;
     }
     modifier canReveal(address bidderAddress) {
-        require(
-            _biddetails[bidderAddress]._hasRevealed == false,
-            "you have already bid!!!"
-        );
+        require( _biddetails[bidderAddress]._hasRevealed == false, "you have already bid!!!" );
         _;
     }
 
-
-
-    function commitBid(bytes32 _secretBid, address _address) private {
-        _biddetails[_address]._hasBid = true;
-        _biddetails[_address]._bidHash = _secretBid;
-        emit BidCommitted(_address, _auctionid);
-    }
-
-
     function commit(address _bidderAddress, bytes32 hash) external canBid(_bidderAddress) {
-        commitBid(hash, _bidderAddress);
         _bidders.push(payable(_bidderAddress));
+        _biddetails[_bidderAddress]._hasBid = true;
+        _biddetails[_bidderAddress]._bidHash =hash ;
+        emit BidCommitted(_bidderAddress, _auctionid);
     }
 
-    function revealBid(
-        address bidderAddress,
-        uint bidAmt,
-        string calldata secretSalt
-    ) external canReveal(bidderAddress) {
-        bytes32 _hashBidAmt = keccak256(abi.encode(bidAmt));
+    function revealBid( address bidderAddress, uint256 bidAmt, string calldata secretSalt ) external canReveal(bidderAddress) {
+        uint256 weiValue = bidAmt * 1e18;
+        bytes32 _hashBidAmt = keccak256(abi.encode(weiValue));
         require(
             keccak256(abi.encode(_hashBidAmt, secretSalt)) ==
                 _biddetails[bidderAddress]._bidHash,
