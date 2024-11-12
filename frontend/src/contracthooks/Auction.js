@@ -36,7 +36,54 @@ const CreateAuction = async (value, auctionId) => {
     }
 };
 
-export { CreateAuction };
+const RevealWinner = async (id) => {
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const auctionContract = new ethers.Contract(
+            ContractJson.contractAddress,
+            ContractJson.abi,
+            signer
+        );
+
+        const tx = await auctionContract.getWinner(id);
+        const receipt = await tx.wait();
+
+        return {
+            success: true,
+            message: "Winner revealed successfully",
+        };
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+
+const transferAmount = async (id) => {
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const auctionContract = new ethers.Contract(
+            ContractJson.contractAddress,
+            ContractJson.abi,
+            signer
+        );
+
+        const tx = await auctionContract.transferAmount(id);
+        const receipt = await tx.wait();
+
+        return {
+            success: true,
+            message: "Amount transferred successfully",
+        };
+
+    } catch (error) {
+        throw new Error(error.message);
+
+    }
+}
+
+export { CreateAuction, RevealWinner, transferAmount };
 
 
 

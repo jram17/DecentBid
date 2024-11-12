@@ -1,14 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toTitleCase } from '@/utils/AuctionDetailsUtils';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
+import { transferAmount, RevealWinner } from '../../contracthooks/Auction';
+import { useSelector } from 'react-redux';
+import { ethers } from 'ethers';
+
 function JoinRoomModal({ auction }) {
+  const address = useSelector((state) => state.address.address);
+
   const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [error, setErrorMsg] = useState('');
+  const [isTransferAmount, setTransferAmount] = useState(false);
+  const [isRevealWinner, setRevealWinner] = useState(false);
+  const [isRevealEnabled, setRevealEnabled] = useState(false);
+  useEffect(() => {
+    const fetchAuctionStatus = async () => {
+      try {
+        if (!address || !auction.auctionid) return;
+
+        if (auction.isWinnedAnnounced) setRevealWinner(true);
+
+        if (auction.isRevealEnabled) setRevealEnabled(true);
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        await provider.send('eth_requestAccounts', []);
+        const auctionContract = new ethers.Contract(
+          ContractJson.contractAddress,
+          ContractJson.abi,
+          signer
+        );
+
+        const filter = auctionContract.filters.TransferStatus(
+          null,
+          auction.auctionid
+        );
+        const events = await auctionContract.queryFilter(filter, 0, 'latest');
+        if (events.length > 0) {
+          setTransferAmount(true);
+        }
+      } catch (error) {
+        console.error(error);
+        setError(true);
+        setErrorMsg('Failed to fetch auction status.');
+      }
+    };
+    fetchAuctionStatus();
+  }, [address, auction]);
   const enableRevealPhase = async (id) => {
     if (isLoading) return;
     try {
@@ -21,6 +63,7 @@ function JoinRoomModal({ auction }) {
         toast({
           title: 'Reveal phase enabled successfully',
         });
+        setRevealEnabled(true);
       } else {
         setError(true);
         setErrorMsg('Failed to enable reveal phase.');
@@ -31,6 +74,43 @@ function JoinRoomModal({ auction }) {
       setError(true);
       setErrorMsg('Failed to enable reveal phase.');
       setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const RevealWinnerFn = async (id) => {
+    if (isLoading) return;
+    try {
+      setLoading(true);
+      const response = await RevealWinner(id);
+      if (response.success) {
+        setWinnerRevealed(true);
+      }
+    } catch (error) {
+      console.error(error);
+      setError(true);
+      setErrorMsg('Failed to reveal winner.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const TransferAmountFn = async (id) => {
+    try {
+      if (isLoading) return;
+      setLoading(true);
+      const response = await transferAmount(id);
+      if (response.success) {
+        setTransferAmount(true);
+      } else {
+        setError(true);
+        setErrorMsg('Failed to transfer amount.');
+      }
+    } catch (error) {
+      console.error(error);
+      setError(true);
+      setErrorMsg('Failed to transfer amount.');
     } finally {
       setLoading(false);
     }
@@ -58,9 +138,9 @@ function JoinRoomModal({ auction }) {
             {' '}
             <span className="min-w-[10vw]">Auction Status</span>
             <span>
-              {auction.isRevealEnabled
+              {isRevealEnabled
                 ? 'Reveal Phase'
-                : auction.isWinnedAnnounced !== 'Yet to be Decided'
+                : isRevealWinner !== 'Yet to be Decided'
                 ? 'Winner Announced'
                 : 'Commit Phase'}
             </span>
@@ -69,13 +149,28 @@ function JoinRoomModal({ auction }) {
         <div className="card-content grid gap-x-3 grid-cols-3 w-full">
           <Button
             onClick={() => {
+              if (isRevealEnabled) return;
               return enableRevealPhase(auction.auctionid);
             }}
           >
             Start Reveal Phase
           </Button>
-          <Button>Announce Winner</Button>
-          <Button>Transfer Amount</Button>
+          <Button
+            onClick={() => {
+              if (isWinnedAnnounced) return;
+              return RevealWinnerFn(auction.auctionid);
+            }}
+          >
+            Announce Winner
+          </Button>
+          <Button
+            onClick={() => {
+              if (isTransferAmount) return;
+              return TransferAmountFn(auction.auctionid);
+            }}
+          >
+            Transfer Amount
+          </Button>
         </div>
         {isError && <p className=" form-message">{error}</p>}
       </div>
