@@ -46,8 +46,7 @@ contract Main {
         address auctioncreator = _auctiondetails[auctionId]
             .auction
             ._auctionowner();
-        console.log("auction owner address:", auctioncreator);
-        console.log("senders address:", bidderAddress);
+
         require(auctioncreator != bidderAddress, "Only bidders are allowed!");
         _;
     }
@@ -56,7 +55,6 @@ contract Main {
         string memory auctionId
     ) public payable onlyBidder(msg.sender, auctionId) {
         uint256 _minamount = _auctiondetails[auctionId].auction._minamount();
-        console.log(msg.value);
         require(msg.value == _minamount, "pay min amount!!");
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
@@ -114,6 +112,17 @@ contract Main {
 
         address payable _auctionwinner = auction.getAuctionWinner();
         emit Winner(_auctionwinner, _auctionId);
+    }
+
+    function returnMainbalance() public view returns (uint) {
+        return address((this)).balance;
+    }
+
+    function returncontractbalance(
+        string memory _auctionId
+    ) public view returns (uint) {
+        address _address = _auctiondetails[_auctionId].contract_address;
+        return _address.balance;
     }
 
     function transferAmount(string memory _auctionId) external {

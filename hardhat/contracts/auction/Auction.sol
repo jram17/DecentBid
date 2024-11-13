@@ -30,6 +30,7 @@ contract Auction {
     string _auctionid;
     mapping(address => BidDetails) _biddetails;
     uint256 _amount_to_be_paid;
+    uint winnerRevealTime;
     address payable _winner;
     Main main_parent;
 
@@ -81,40 +82,49 @@ contract Auction {
             "bid amount and salt doesnot match !!!"
         );
         _biddetails[bidderAddress]._hasRevealed = true;
-        _biddetails[bidderAddress]._bidamount = bidAmt;
+        _biddetails[bidderAddress]._bidamount = weiValue;
     }
 
     function getAuctionWinner() public payable returns (address payable) {
         require(_bidders.length > 0, "No bidding has been produced yet");
 
         uint256 _length = _bidders.length;
-        address _maxbidder = _bidders[0];
-        address _secondlastelement;
+        _winner = _bidders[0];
+        address payable _secondlastelement;
+
         if (_length == 1) {
-            _winner = payable(_bidders[0]);
             _amount_to_be_paid = _biddetails[_winner]._bidamount;
-        } else {
+
+            return _winner;
+        } else if (_length > 1) {
+            _secondlastelement = _bidders[1];
             for (uint256 i = 1; i < _length; ++i) {
                 if (!_biddetails[_bidders[i]]._hasRevealed) {
                     emit unRevealed(_bidders[i], _auctionid);
                     continue;
                 }
+
                 if (
                     _biddetails[_bidders[i]]._bidamount >
-                    _biddetails[_maxbidder]._bidamount
+                    _biddetails[_winner]._bidamount
                 ) {
-                    _secondlastelement = _maxbidder;
-                    _maxbidder = _bidders[i];
+                    _secondlastelement = payable(_winner);
+                    _winner = _bidders[i];
                 }
             }
         }
 
-        _winner = payable(_maxbidder);
+        require(
+            _secondlastelement != address(0),
+            "No second highest bidder found"
+        );
+
         _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
         return _winner;
     }
 
     function transferAmount() public returns (bool) {
+        require(_winner != address(0), "reveal the winner first");
         uint256 _length = _bidders.length;
         for (uint256 i = 0; i < _length; ++i) {
             if (_bidders[i] == _winner) {
