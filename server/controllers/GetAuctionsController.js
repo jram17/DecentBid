@@ -67,7 +67,10 @@ const updatingUserAuctions = async (req, res) => {
         }
 
         const userAuctions = await UserAuctions.findOne({ address });
-
+        const auction = await AuctionDetails.findOne({ auctionId });
+        if (!auction) {
+            return res.status(400).json({ message: 'Auction not found' });
+        }
         if (!userAuctions) {
             const userAuctions = new UserAuctions({
                 address: address,
@@ -79,7 +82,9 @@ const updatingUserAuctions = async (req, res) => {
             await userAuctions.save();
         }
 
-        res.status(200).json(userAuctions);
+        res.status(200).json({
+            message: 'User auctions updated successfully'
+        });
 
     } catch (error) {
         console.error('Error updating user auctions:', error);
