@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { transferAmount, RevealWinner } from '../../contracthooks/Auction';
 import { useSelector } from 'react-redux';
 import { ethers } from 'ethers';
-
+import ContractJson from '../../../contract.json';
 function JoinRoomModal({ auction }) {
   const address = useSelector((state) => state.address.address);
 

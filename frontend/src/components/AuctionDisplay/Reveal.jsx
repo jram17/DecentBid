@@ -16,12 +16,9 @@ const Reveal = ({ connectWallet, id }) => {
     const contractAddress = ContractJson.contractAddress;
     const contractABI = ContractJson.abi;
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
-    const bidAmountInWei = ethers.utils.parseUnits(
-      bidAmount.toString(),
-      'ether'
-    );
+    // const bidAmountInWei = ethers.utils.parseUnits(bidAmount.toString(),'ether');
     try {
-      const tx = await contract.signReveal(id, bidAmountInWei, secretSalt);
+      const tx = await contract.signReveal(id, bidAmount, secretSalt);
       await tx.wait();
 
       alert('Reveal successfull!!');
@@ -34,15 +31,19 @@ const Reveal = ({ connectWallet, id }) => {
     <div>
       <h1> Welcome to Reveal phase</h1>
       <p>Enter your bid and secret salt here:</p>
-
+      <br />
       <form
         onSubmit={handleSubmit(onSubmitRevealbid)}
-        className="gap-2 flex flex-col w-full m-2 justify-center "
+        // className="gap-2 flex flex-col w-full m-2 justify-center "
+        className="gap-4 flex flex-col w-full max-w-md m-auto p-6 border border-gray-200 rounded-lg shadow-lg bg-white"
+
       >
         <div>
           <input
             type="text"
             placeholder="BID amount "
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+
             {...register('bidAmount', {
               required: 'Bid amount is required',
               pattern: {
@@ -60,6 +61,8 @@ const Reveal = ({ connectWallet, id }) => {
           <input
             type="text"
             placeholder="Secret Salt"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+
             {...register('secretSalt', {
               required: 'Secret salt is required',
               minLength: {
@@ -73,7 +76,9 @@ const Reveal = ({ connectWallet, id }) => {
           )}
         </div>
 
-        <button type="submit">Reveal Bid</button>
+        <button type="submit"
+          className="m-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+        >Reveal Bid</button>
       </form>
     </div>
   );

@@ -6,12 +6,9 @@ import "hardhat/console.sol";
 
 contract Main {
     event Winner(address indexed winner, string indexed _auctionid);
-
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
-    event commitAmountPayEvent(
-        address indexed bidder,
-        string indexed auctionId
-    );
+    event commitAmountPayEvent(address indexed bidder, string indexed auctionId);
+    event revealPhaseCompleted(address indexed bidder, string indexed auctionId);
     event TransferStatus(bool status, string indexed auctionId);
     struct AuctionHistory {
         address payable contract_address;
@@ -68,7 +65,7 @@ contract Main {
         bytes32 hash
     ) public payable onlyBidder(msg.sender, auctionId) {
         _auctiondetails[auctionId].auction.commit(msg.sender, hash);
-        emit commitPhaseCompeted(msg.sender, auctionId);
+        emit commitAmountPayEvent(msg.sender, auctionId);
     }
 
     function signReveal(
@@ -77,10 +74,11 @@ contract Main {
         string memory secretSalt
     ) public payable onlyBidder(msg.sender, auctionId) {
         _auctiondetails[auctionId].auction.revealBid(
-            msg.sender,
+     msg.sender,
             bidAmt,
             secretSalt
         );
+        emit revealPhaseCompleted(msg.sender, auctionId);
     }
 
     function getHash(

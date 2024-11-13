@@ -21,6 +21,7 @@ function AuctionDetails() {
   const fetchAuctionDetails = async () => {
     try {
       const response = await axios.get(`/auctions/${id}`);
+      console.log(response.data);
       SetDetails(response.data);
     } catch (error) {
       setisError(true);
@@ -51,7 +52,7 @@ function AuctionDetails() {
         }
 
 
-        const filter3 = auctionContract.filters.commitPhaseCompeted(address, id);
+        const filter3 = auctionContract.filters.commitAmountPayEvent(address, id);
         const events3 = await auctionContract.queryFilter(filter3, 0, 'latest');
         if (events3.length > 0) {
           setCommitPhaseDone(true);
