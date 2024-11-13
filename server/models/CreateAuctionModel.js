@@ -22,6 +22,10 @@ const AuctionSchema = new mongoose.Schema({
     isWinnerAnnounced: {
         type: Boolean,
         default: false
+    },
+    winner: {
+        type: String,
+        default: null
     }
 }, { timestamps: true });
 

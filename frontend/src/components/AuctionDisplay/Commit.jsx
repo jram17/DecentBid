@@ -5,14 +5,19 @@ import ContractJson from '@/../contract.json';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { getHashInWei, getTotalHash } from '@/utils/HashUtils';
-
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
-  const { register, handleSubmit, formState: { errors }, } = useForm();
+  const address = useSelector((state) => state.address.address);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [hashval, setHashval] = useState('');
   const [num, setNum] = useState(0);
 
-  async function payCommitAmount(num,totalHash) {
-
+  async function payCommitAmount(num, totalHash) {
     const signer = await connectWallet();
     if (!signer) return;
 
@@ -22,8 +27,15 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
 
     try {
       const value = ethers.utils.parseEther(num.toString());
-      const tx = await contract.payCommitBidAmount(id,totalHash, { value });
+      const tx = await contract.payCommitBidAmount(id, totalHash, { value });
       await tx.wait();
+      const response = await axios.put('/auctions/user-auctions', {
+        address,
+        auctionId: id,
+      });
+      if (response.status === 200) {
+        setIsRevealEnabled(true);
+      }
 
       // setCommitPaid(true);
       alert('Successfully paid commit bid!');
@@ -55,8 +67,7 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
       // const tx = await contract.signCommit(id, totalHash);
       // await tx.wait();
       // alert('Commit successful!');
-      await payCommitAmount(num,totalHash);
-      setIsRevealEnabled(true);
+      await payCommitAmount(num, totalHash);
     } catch (error) {
       console.error(error.message);
       alert('Commit failed! Please try again.');
@@ -67,7 +78,7 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
     try {
       const hashval = getHashInWei(num);
       setHashval(hashval);
-      // await payCommitAmount(num); 
+      // await payCommitAmount(num);
     } catch (error) {
       console.error('Could not commit the bid amount', error);
       alert('Paying commit bid failed!');
@@ -79,14 +90,10 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
       <h1>Welcome to the commit phase</h1>
 
       <p>Enter your bid and secret salt here:</p>
-      <Input
-        value={num}
-        onChange={(e) => setNum(e.target.value)}
-      />
+      <Input value={num} onChange={(e) => setNum(e.target.value)} />
       <Button type="button" onClick={() => getNumberHash()}>
         Calculate hash of number
       </Button>
-
 
       <form
         onSubmit={handleSubmit(onSubmitCommitBid)}
@@ -108,7 +115,9 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
             })}
           />
           {errors.bidHash && (
-            <p className="text-red-600 mt-1 text-sm">{errors.bidHash.message}</p>
+            <p className="text-red-600 mt-1 text-sm">
+              {errors.bidHash.message}
+            </p>
           )}
         </div>
 
@@ -126,7 +135,9 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
             })}
           />
           {errors.secretSalt && (
-            <p className="text-red-600 mt-1 text-sm">{errors.secretSalt.message}</p>
+            <p className="text-red-600 mt-1 text-sm">
+              {errors.secretSalt.message}
+            </p>
           )}
         </div>
 

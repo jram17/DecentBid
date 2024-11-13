@@ -48,6 +48,8 @@ const userAuctions = async (req, res) => {
             return res.status(400).json({ message: 'User auctions not found' });
         }
 
+        const AuctionDetails = await UserAuctions.map
+
         res.status(200).json(userAuctions);
 
     } catch (error) {
@@ -65,7 +67,10 @@ const updatingUserAuctions = async (req, res) => {
         }
 
         const userAuctions = await UserAuctions.findOne({ address });
-
+        const auction = await AuctionDetails.findOne({ auctionId });
+        if (!auction) {
+            return res.status(400).json({ message: 'Auction not found' });
+        }
         if (!userAuctions) {
             const userAuctions = new UserAuctions({
                 address: address,
@@ -77,7 +82,9 @@ const updatingUserAuctions = async (req, res) => {
             await userAuctions.save();
         }
 
-        res.status(200).json(userAuctions);
+        res.status(200).json({
+            message: 'User auctions updated successfully'
+        });
 
     } catch (error) {
         console.error('Error updating user auctions:', error);
@@ -129,8 +136,42 @@ const updateRevealPhase = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Reveal phase enabled successfully',
-            auction,
+            message: 'Reveal phase enabled successfully'
+        });
+
+    } catch (error) {
+        console.error('Error enabling reveal phase:', error);
+        res.status(500).json({ message: 'An error occurred while enabling the reveal phase' });
+    }
+};
+
+const updateWinner = async (req, res) => {
+    try {
+
+
+        const { id: auctionId, winner } = req.body;
+
+        if (!auctionId) {
+            return res.status(400).json({ message: 'Auction ID is required' });
+        }
+
+        const auction = await AuctionDetails.findOne({ auctionId });
+
+        if (!auction) {
+            return res.status(400).json({ message: 'Auction not found' });
+        }
+        if (!auction.isRevealEnabled) {
+            return res.status(400).json({ message: 'Reveal phase not enabled' });
+        }
+        auction.isWinnerAnnounced = true;
+        auction.isRevealEnabled = false;
+        auction.winner = winner;
+        await auction.save();
+
+
+        res.status(200).json({
+            success: true,
+            message: 'Winner was successfully declared'
         });
 
     } catch (error) {
@@ -141,4 +182,6 @@ const updateRevealPhase = async (req, res) => {
 
 
 
-module.exports = { auctionDetails, getAuctions, getOwningAuctions, updatingUserAuctions, userAuctions, updateRevealPhase };
+
+
+module.exports = { auctionDetails, getAuctions, getOwningAuctions, updatingUserAuctions, userAuctions, updateRevealPhase, updateWinner };

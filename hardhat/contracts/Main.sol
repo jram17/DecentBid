@@ -7,8 +7,14 @@ import "hardhat/console.sol";
 contract Main {
     event Winner(address indexed winner, string indexed _auctionid);
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
-    event commitAmountPayEvent(address indexed bidder, string indexed auctionId);
-    event revealPhaseCompleted(address indexed bidder, string indexed auctionId);
+    event commitAmountPayEvent(
+        address indexed bidder,
+        string indexed auctionId
+    );
+    event revealPhaseCompleted(
+        address indexed bidder,
+        string indexed auctionId
+    );
     event TransferStatus(bool status, string indexed auctionId);
     struct AuctionHistory {
         address payable contract_address;
@@ -75,7 +81,7 @@ contract Main {
         string memory secretSalt
     ) public payable onlyBidder(msg.sender, auctionId) {
         _auctiondetails[auctionId].auction.revealBid(
-     msg.sender,
+            msg.sender,
             bidAmt,
             secretSalt
         );
@@ -92,7 +98,8 @@ contract Main {
     }
 
     function payCommitBidAmount(
-        string memory auctionId,bytes32 hash
+        string memory auctionId,
+        bytes32 hash
     ) public payable onlyBidder(msg.sender, auctionId) {
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
