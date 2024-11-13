@@ -12,7 +12,6 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
   const [num, setNum] = useState(0);
 
   async function payCommitAmount(num,totalHash) {
-    // if(isCommitPaid)return;
 
     const signer = await connectWallet();
     if (!signer) return;
@@ -45,19 +44,18 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
     const { bidHash, secretSalt } = data;
     const totalHash = getTotalHash(bidHash, secretSalt);
 
-    const signer = await connectWallet();
-    if (!signer) return;
+    // const signer = await connectWallet();
+    // if (!signer) return;
 
-    const contractAddress = ContractJson.contractAddress;
-    const contractABI = ContractJson.abi;
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    // const contractAddress = ContractJson.contractAddress;
+    // const contractABI = ContractJson.abi;
+    // const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
       // const tx = await contract.signCommit(id, totalHash);
       // await tx.wait();
       // alert('Commit successful!');
       await payCommitAmount(num,totalHash);
-
       setIsRevealEnabled(true);
     } catch (error) {
       console.error(error.message);
