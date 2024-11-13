@@ -6,10 +6,8 @@ import "hardhat/console.sol";
 
 contract Main {
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
-    event commitAmountPayEvent(
-        address indexed bidder,
-        string indexed auctionId
-    );
+    event commitPhaseCompeted(address indexed bidder, string indexed auctionId);
+    event revealPhaseCompleted(address indexed bidder, string indexed auctionId);
     struct AuctionHistory {
         address payable contract_address;
         address payable owner;
@@ -66,6 +64,7 @@ contract Main {
         bytes32 hash
     ) public payable onlyBidder(msg.sender, auctionId) {
         _auctiondetails[auctionId].auction.commit(msg.sender, hash);
+        emit commitPhaseCompeted(msg.sender, auctionId);
     }
 
     function signReveal(
@@ -73,7 +72,9 @@ contract Main {
         uint256 bidAmt,
         string memory secretSalt
     ) public payable onlyBidder(msg.sender, auctionId) {
+        // console.log(hit);
         _auctiondetails[auctionId].auction.revealBid(msg.sender,bidAmt, secretSalt);
+        emit commitPhaseCompeted(msg.sender, auctionId);
     }
 
     function getHash(uint decimalValue,string memory secretSalt) public pure returns(bytes32) {
@@ -82,16 +83,20 @@ contract Main {
         return keccak256(abi.encode(_hashBidAmt,secretSalt));
     }
 
+    function getnumberhash(uint decimalValue ) public pure returns(bytes32) {
+        uint256 weiValue = decimalValue * 1e18;
+        return keccak256(abi.encode(weiValue));
+    }
+
 
     function payCommitBidAmount(
-        string memory auctionId,
-        bytes32 hash
+        string memory auctionId,bytes32 hash
     ) public payable onlyBidder(msg.sender, auctionId) {
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
         }("");
         require(sent, "Failed to pay commitBid");
-        emit commitAmountPayEvent(msg.sender, auctionId);
         signCommit(auctionId, hash);
+
     }
 }

@@ -22,7 +22,7 @@ async function connectWallet() {
 }
 
 const CommitReveal = ({ props }) => {
-  const { auctionDetails, id, isBasePaid, setisBasePaid } = props;
+  const { auctionDetails, id, isBasePaid, setisBasePaid ,isCommitPhaseDone,setCommitPhaseDone ,isRevealPhaseDone } = props;
 
   const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
 
@@ -61,18 +61,24 @@ const CommitReveal = ({ props }) => {
       </div>
     );
   }
-  if (auctionDetails.isCommitEnabled && !isRevealEnabled) {
+  if ( !isRevealEnabled) {
     return (
-      <Commit
+      <Commit 
         connectWallet={connectWallet}
         id={id}
         setIsRevealEnabled={setIsRevealEnabled}
+        // isCommitPaid={isCommitPaid}
+        // setCommitPaid={setCommitPaid}
+        // isCommitPhaseDone={isCommitPhaseDone}
+        // setCommitPhaseDone={setCommitPhaseDone}
+        
       />
     );
   }
 
+
   auctionDetails.isRevealEnabled ? (
-    isBasePaid ? (
+    isBasePaid && isCommitPhaseDone ? (
       <Reveal connectWallet={connectWallet} id={id} />
     ) : (
       <div>
@@ -84,6 +90,22 @@ const CommitReveal = ({ props }) => {
       <h1>The auction is not in the reveal phase</h1>
     </div>
   );
+
+  if(!auctionDetails.isRevealEnabled){
+    return (
+      <div>
+        <h1>The reveal phase will be started soon</h1>
+      </div>
+    )
+  }
+
+  if(!auctionDetails.isWinnerAnnounced){
+    return (
+      <div>
+        <h1>The auction is over. the winner is not annouced yet</h1>
+      </div>
+    )
+  }
 
   return (
     <div>

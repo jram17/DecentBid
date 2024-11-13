@@ -13,6 +13,10 @@ function AuctionDetails() {
   const [isLoading, setisLoading] = useState(true);
   const [isError, setisError] = useState(false);
   const [isBasePaid, setisBasePaid] = useState(false);
+
+  const [isCommitPhaseDone, setCommitPhaseDone] = useState(false);
+  const [isRevealPhaseDone, setRevealPhaseDone] = useState(false);
+
   const address = useSelector((state) => state.address.address);
   const fetchAuctionDetails = async () => {
     try {
@@ -40,10 +44,22 @@ function AuctionDetails() {
           ContractJson.abi,
           signer
         );
-        const filter = auctionContract.filters.BaseAmountPayEvent(address, id);
-        const events = await auctionContract.queryFilter(filter, 0, 'latest');
-        if (events.length > 0) {
+        const filter1 = auctionContract.filters.BaseAmountPayEvent(address, id);
+        const events1 = await auctionContract.queryFilter(filter1, 0, 'latest');
+        if (events1.length > 0) {
           setisBasePaid(true);
+        }
+
+
+        const filter3 = auctionContract.filters.commitPhaseCompeted(address, id);
+        const events3 = await auctionContract.queryFilter(filter3, 0, 'latest');
+        if (events3.length > 0) {
+          setCommitPhaseDone(true);
+        }
+        const filter4 = auctionContract.filters.revealPhaseCompleted(address, id);
+        const events4 = await auctionContract.queryFilter(filter4, 0, 'latest');
+        if (events4.length > 0) {
+          setRevealPhaseDone(true);
         }
       };
       fetchEvents();
@@ -70,7 +86,7 @@ function AuctionDetails() {
       </div>
       <div className="w-4/12 h-full flex items-center m-8">
         <CommitReveal
-          props={{ auctionDetails, id, isBasePaid, setisBasePaid }}
+          props={{ auctionDetails, id, isBasePaid, setisBasePaid ,isCommitPhaseDone ,isRevealPhaseDone  }}
         />
       </div>
     </div>
