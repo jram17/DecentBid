@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import ContractJson from '../../contract.json';
-
+import axios from 'axios';
 
 const CreateAuction = async (value, auctionId) => {
     const wei = ethers.utils.parseEther(value.toString());
@@ -48,11 +48,17 @@ const RevealWinner = async (id) => {
 
         const tx = await auctionContract.getWinner(id);
         const receipt = await tx.wait();
-
-        return {
-            success: true,
-            message: "Winner revealed successfully",
-        };
+        const body = {
+            id: id,
+            winner: receipt.events[0].args.winner,
+        }
+        const response = axios.put('/auctions/reveal-winner', body);
+        if (response.status === 200) {
+            return {
+                success: true,
+                message: "Winner revealed successfully",
+            };
+        }
     } catch (error) {
         throw new Error(error.message);
     }
