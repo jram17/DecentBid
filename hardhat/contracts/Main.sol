@@ -5,9 +5,14 @@ import "./auction/Auction.sol";
 import "hardhat/console.sol";
 
 contract Main {
+    event Winner(address indexed winner, string indexed _auctionid);
+
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
-    event commitPhaseCompeted(address indexed bidder, string indexed auctionId);
-    event revealPhaseCompleted(address indexed bidder, string indexed auctionId);
+    event commitAmountPayEvent(
+        address indexed bidder,
+        string indexed auctionId
+    );
+    event TransferStatus(bool status, string indexed auctionId);
     struct AuctionHistory {
         address payable contract_address;
         address payable owner;
@@ -38,19 +43,18 @@ contract Main {
     }
 
     modifier onlyBidder(address bidderAddress, string memory auctionId) {
-        address auctioncreator = _auctiondetails[auctionId].auction._auctionowner();
-        console.log("auction owner address:", auctioncreator);
-        console.log("senders address:", bidderAddress);
+        address auctioncreator = _auctiondetails[auctionId]
+            .auction
+            ._auctionowner();
+
         require(auctioncreator != bidderAddress, "Only bidders are allowed!");
         _;
-
     }
 
     function payminamount(
         string memory auctionId
     ) public payable onlyBidder(msg.sender, auctionId) {
         uint256 _minamount = _auctiondetails[auctionId].auction._minamount();
-        console.log(msg.value);
         require(msg.value == _minamount, "pay min amount!!");
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
@@ -72,22 +76,21 @@ contract Main {
         uint256 bidAmt,
         string memory secretSalt
     ) public payable onlyBidder(msg.sender, auctionId) {
-        // console.log(hit);
-        _auctiondetails[auctionId].auction.revealBid(msg.sender,bidAmt, secretSalt);
-        emit commitPhaseCompeted(msg.sender, auctionId);
+        _auctiondetails[auctionId].auction.revealBid(
+            msg.sender,
+            bidAmt,
+            secretSalt
+        );
     }
 
-    function getHash(uint decimalValue,string memory secretSalt) public pure returns(bytes32) {
+    function getHash(
+        uint decimalValue,
+        string memory secretSalt
+    ) public pure returns (bytes32) {
         uint256 weiValue = decimalValue * 1e18;
         bytes32 _hashBidAmt = keccak256(abi.encode(weiValue));
-        return keccak256(abi.encode(_hashBidAmt,secretSalt));
+        return keccak256(abi.encode(_hashBidAmt, secretSalt));
     }
-
-    function getnumberhash(uint decimalValue ) public pure returns(bytes32) {
-        uint256 weiValue = decimalValue * 1e18;
-        return keccak256(abi.encode(weiValue));
-    }
-
 
     function payCommitBidAmount(
         string memory auctionId,bytes32 hash
@@ -97,6 +100,37 @@ contract Main {
         }("");
         require(sent, "Failed to pay commitBid");
         signCommit(auctionId, hash);
+    }
 
+    function getWinner(string memory _auctionId) public {
+        require(
+            msg.sender == _auctiondetails[_auctionId].owner,
+            "Only the owner can trigger this function"
+        );
+        Auction auction = _auctiondetails[_auctionId].auction;
+
+        address payable _auctionwinner = auction.getAuctionWinner();
+        emit Winner(_auctionwinner, _auctionId);
+    }
+
+    function returnMainbalance() public view returns (uint) {
+        return address((this)).balance;
+    }
+
+    function returncontractbalance(
+        string memory _auctionId
+    ) public view returns (uint) {
+        address _address = _auctiondetails[_auctionId].contract_address;
+        return _address.balance;
+    }
+
+    function transferAmount(string memory _auctionId) external {
+        require(
+            msg.sender == _auctiondetails[_auctionId].owner,
+            "Only the owner can trigger this function"
+        );
+        Auction auction = _auctiondetails[_auctionId].auction;
+        bool status = auction.transferAmount();
+        emit TransferStatus(status, _auctionId);
     }
 }
