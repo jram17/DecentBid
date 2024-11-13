@@ -7,13 +7,6 @@ contract Auction {
     receive() external payable {}
 
     event unRevealed(address indexed bidder, string indexed _auctionid);
-    event BidCommitted(address indexed bidder, string indexed auctionId);
-
-    event BidCommitted(
-        address indexed bidder,
-        bytes32 bidHash,
-        string auctionId
-    );
 
     struct BidDetails {
         bytes32 _bidHash;
@@ -60,6 +53,19 @@ contract Auction {
         _;
     }
 
+    function AfterReveal(address bidderAddress, bool status) internal {
+        console.log(status);
+        if (status) {
+            main_parent.increaseCred(bidderAddress, 10, true); // success reveal
+        } else {
+            main_parent.increaseCred(bidderAddress, 5, false); // fail reveal
+        }
+    }
+
+    function AfterWin(address bidderAddress) internal {
+        main_parent.increaseCred(bidderAddress, 10, true); // success win
+    }
+
     function commit(
         address _bidderAddress,
         bytes32 hash
@@ -72,17 +78,27 @@ contract Auction {
     function revealBid(
         address bidderAddress,
         uint256 bidAmt,
-        string calldata secretSalt
+        string memory secretSalt
     ) external canReveal(bidderAddress) {
         uint256 weiValue = bidAmt * 1e18;
         bytes32 _hashBidAmt = keccak256(abi.encode(weiValue));
-        require(
-            keccak256(abi.encode(_hashBidAmt, secretSalt)) ==
-                _biddetails[bidderAddress]._bidHash,
-            "bid amount and salt doesnot match !!!"
-        );
-        _biddetails[bidderAddress]._hasRevealed = true;
-        _biddetails[bidderAddress]._bidamount = weiValue;
+        bool status = keccak256(abi.encode(_hashBidAmt, secretSalt)) ==
+            _biddetails[bidderAddress]._bidHash;
+        if (status) {
+            AfterReveal(bidderAddress, status);
+            _biddetails[bidderAddress]._hasRevealed = true;
+            _biddetails[bidderAddress]._bidamount = weiValue;
+        } else {
+            AfterReveal(bidderAddress, status);
+        }
+
+        // require(
+        //     keccak256(abi.encode(_hashBidAmt, secretSalt)) ==
+        //         _biddetails[bidderAddress]._bidHash,
+        //     "bid amount and salt doesnot match !!!"
+        // );
+        // _biddetails[bidderAddress]._hasRevealed = true;
+        // _biddetails[bidderAddress]._bidamount = weiValue;
     }
 
     function getAuctionWinner() public payable returns (address payable) {
