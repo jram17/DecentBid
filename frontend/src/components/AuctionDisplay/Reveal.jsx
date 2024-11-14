@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { BigNumber, ethers } from 'ethers';
 import ContractJson from '@/../contract.json';
-const Reveal = ({ connectWallet, id }) => {
+const Reveal = ({ connectWallet, id , setRevealDone }) => {
   const {
     register,
     handleSubmit,
@@ -22,6 +22,7 @@ const Reveal = ({ connectWallet, id }) => {
       await tx.wait();
 
       alert('Reveal successfull!!');
+      setRevealDone(true); //setting the use state
     } catch (error) {
       console.error('error while revealing the bid amount', error);
       alert('Reveal failed!! !');
@@ -34,9 +35,7 @@ const Reveal = ({ connectWallet, id }) => {
       <br />
       <form
         onSubmit={handleSubmit(onSubmitRevealbid)}
-        // className="gap-2 flex flex-col w-full m-2 justify-center "
         className="gap-4 flex flex-col w-full max-w-md m-auto p-6 border border-gray-200 rounded-lg shadow-lg bg-white"
-
       >
         <div>
           <input

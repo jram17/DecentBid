@@ -38,6 +38,7 @@ const CommitReveal = ({ props }) => {
   const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
 
   const [isRevealEnabled, setIsRevealEnabled] = useState(false);
+  const [revealDone,setRevealDone] = useState(false);
   async function payMinAmount() {
     const signer = await connectWallet();
     if (!signer) return;
@@ -78,36 +79,15 @@ const CommitReveal = ({ props }) => {
         id={id}
         setIsRevealEnabled={setIsRevealEnabled}
         setCommitPhaseDone={setCommitPhaseDone}
-        // isCommitPaid={isCommitPaid}
-        // setCommitPaid={setCommitPaid}
-        // isCommitPhaseDone={isCommitPhaseDone}
-        // setCommitPhaseDone={setCommitPhaseDone}
       />
     );
   }
 
-  // auctionDetails.isRevealEnabled ? (
-  //     isBasePaid && isCommitPhaseDone ? (
-  //       <Reveal connectWallet={connectWallet} id={id} />
-  //     ) : (
-  //       <div>
-  //         <h1>You didn&apos;t commit and the commit phase it over</h1>
-  //       </div>
-  //     )
-  //   ) : (
-  //     <div>
-  //       <h1>The auction is not in the reveal phase</h1>
-  //     </div>
-  //   );
-
-  if (
-    auctionDetails.isRevealEnabled &&
-    isBasePaid &&
-    isCommitPhaseDone &&
-    !isRevealPhaseDone
-  ) {
-    return <Reveal connectWallet={connectWallet} id={id} />;
-  }
+    if(auctionDetails.isRevealEnabled && isBasePaid && isCommitPhaseDone && !isRevealPhaseDone && !revealDone){
+      return(        
+      <Reveal connectWallet={connectWallet} id={id} setRevealDone={setRevealDone}/>
+      )
+    } 
 
   if (!auctionDetails.isRevealEnabled) {
     return (
@@ -117,7 +97,7 @@ const CommitReveal = ({ props }) => {
     );
   }
 
-  if (!auctionDetails.isWinnerAnnounced) {
+  if (!auctionDetails.isWinnerAnnounced && isRevealPhaseDone && revealDone) {
     return (
       <div>
         <h1>The auction is over. the winner is not annouced yet</h1>

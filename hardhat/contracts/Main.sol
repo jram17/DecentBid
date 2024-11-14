@@ -29,6 +29,8 @@ contract Main {
         Owner = payable(msg.sender);
     }
 
+
+
     function createAuction(
         uint256 _minamount,
         string memory auctionId
