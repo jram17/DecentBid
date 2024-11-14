@@ -22,6 +22,7 @@ contract Main {
         Auction auction;
     }
     mapping(string => AuctionHistory) public _auctiondetails;
+    mapping(address => uint256 ) public userCrediblity;
     address payable public Owner;
 
     constructor() {
@@ -138,4 +139,13 @@ contract Main {
         bool status = auction.transferAmount();
         emit TransferStatus(status, _auctionId);
     }
+
+        function increaseCred(address bidderAddress, uint256 points,bool status) public {
+        if(status){
+           userCrediblity[bidderAddress]+=points; 
+        }else{
+            userCrediblity[bidderAddress]-=points;
+        }
+    }
+
 }

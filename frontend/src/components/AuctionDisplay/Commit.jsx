@@ -13,6 +13,7 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue
   } = useForm();
   const [hashval, setHashval] = useState('');
   const [num, setNum] = useState(0);
@@ -78,6 +79,7 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
     try {
       const hashval = getHashInWei(num);
       setHashval(hashval);
+      setValue('bidHash', hashval); 
       // await payCommitAmount(num);
     } catch (error) {
       console.error('Could not commit the bid amount', error);
@@ -104,7 +106,7 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
             type="text"
             placeholder="BID amount hash"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={hashval || ''}
+            value={hashval}
             readOnly
             {...register('bidHash', {
               required: 'Bid hash is required',
