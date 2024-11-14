@@ -61,6 +61,20 @@ const Header = () => {
                   </span>
                 </Button>{' '}
               </DropdownMenuItem>
+
+              <DropdownMenuItem>
+                <Button
+                  variant="link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/auctions');
+                  }}
+                >
+                  <span className="text-gray-600 hover:text-gray-600 text-sm">
+                    All
+                  </span>
+                </Button>{' '}
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Button
                   variant="link"

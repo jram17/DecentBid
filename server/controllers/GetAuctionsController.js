@@ -152,7 +152,7 @@ const updateWinner = async (req, res) => {
         const { id, winner } = req.body;
         console.log(id, winner);
 
-        if (!auctionId) {
+        if (!id) {
             return res.status(400).json({ message: 'Auction ID is required' });
         }
 

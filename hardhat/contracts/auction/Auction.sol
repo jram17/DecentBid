@@ -126,6 +126,11 @@ contract Auction {
                 ) {
                     _secondlastelement = payable(_winner);
                     _winner = _bidders[i];
+                } else if (
+                    _biddetails[_bidders[i]]._bidamount >
+                    _biddetails[_secondlastelement]._bidamount
+                ) {
+                    _secondlastelement = _bidders[i];
                 }
             }
         }

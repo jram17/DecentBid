@@ -7,13 +7,18 @@ import { Button } from '../ui/button';
 import { getHashInWei, getTotalHash } from '@/utils/HashUtils';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
+const Commit = ({
+  connectWallet,
+  id,
+  setIsRevealEnabled,
+  setCommitPhaseDone,
+}) => {
   const address = useSelector((state) => state.address.address);
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue
+    setValue,
   } = useForm();
   const [hashval, setHashval] = useState('');
   const [num, setNum] = useState(0);
@@ -79,7 +84,7 @@ const Commit = ({ connectWallet, id, setIsRevealEnabled }) => {
     try {
       const hashval = getHashInWei(num);
       setHashval(hashval);
-      setValue('bidHash', hashval); 
+      setValue('bidHash', hashval);
       // await payCommitAmount(num);
     } catch (error) {
       console.error('Could not commit the bid amount', error);

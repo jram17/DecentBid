@@ -25,9 +25,7 @@ function JoinRoomModal({ auction }) {
         if (!address || !auction.auctionid) return;
 
         if (auction.isWinnedAnnounced != 'Yet to be Decided') {
-          console.log('came in');
           setRevealWinner(true);
-          console.log(isRevealWinner);
         }
 
         if (auction.isRevealEnabled) setRevealEnabled(true);
@@ -149,7 +147,7 @@ function JoinRoomModal({ auction }) {
             <span>
               {isRevealEnabled
                 ? 'Reveal Phase'
-                : isRevealWinner !== 'Yet to be Decided'
+                : isRevealWinner
                 ? 'Winner Announced'
                 : 'Commit Phase'}
             </span>
