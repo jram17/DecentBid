@@ -23,6 +23,7 @@ const Header = () => {
 
   useEffect(()=>{
     setPoints({ status: false, points: '', accChanged: false });
+    getPoints();
   },[useraddress])
 
   async function getPoints() {
@@ -34,7 +35,7 @@ const Header = () => {
 
         const contractAddress = ContractJson.contractAddress;
         const contractABI = ContractJson.abi;
-        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+        const contract = new ethers.Contract(contractAddress, contractABI, provider);
         const points = await contract.returnUserCredibilty(useraddress);
         console.log('User Points:', points.toString());
         console.log(useraddress);
@@ -142,7 +143,7 @@ const Header = () => {
           {useraddress ? AddressUtils(useraddress) : 'No Account connected'}
         </Badge>
 
-        {!isPoints.status && <Button onClick={getPoints}> Points </Button>}
+        {/* {!isPoints.status && <Button onClick={getPoints}> Points </Button>} */}
         {isPoints.status && <Badge onClick={getPoints}>{isPoints.points} Points</Badge>}
       </div>
     </div>
