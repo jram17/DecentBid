@@ -149,13 +149,14 @@ const updateWinner = async (req, res) => {
     try {
 
 
-        const { id: auctionId, winner } = req.body;
+        const { id, winner } = req.body;
+        console.log(id, winner);
 
-        if (!auctionId) {
+        if (!id) {
             return res.status(400).json({ message: 'Auction ID is required' });
         }
 
-        const auction = await AuctionDetails.findOne({ auctionId });
+        const auction = await AuctionDetails.findOne({ auctionId: id });
 
         if (!auction) {
             return res.status(400).json({ message: 'Auction not found' });

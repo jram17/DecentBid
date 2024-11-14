@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from '../../../public/DecAuction.svg';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
+import { ethers } from 'ethers';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,13 @@ import ContractJson from '@/../contract.json';
 const Header = () => {
   const navigate = useNavigate();
   const useraddress = useSelector((state) => state.address.address);
+  const [isPoints, setPoints] = useState({ status: false, points: '',accCHanged: false });
+
+
+
+  useEffect(()=>{
+    setPoints({ status: false, points: '', accChanged: false });
+  },[useraddress])
 
   async function getPoints() {
     if (window.ethereum) {
@@ -27,7 +35,10 @@ const Header = () => {
         const contractAddress = ContractJson.contractAddress;
         const contractABI = ContractJson.abi;
         const contract = new ethers.Contract(contractAddress, contractABI, signer);
-        // cosnt tx =await contract.
+        const points = await contract.returnUserCredibilty(useraddress);
+        console.log('User Points:', points.toString());
+        console.log(useraddress);
+        setPoints({ status: true, points: points.toString() });
       } catch (error) {
         console.error('User denied account access', error);
         return null;
@@ -85,6 +96,20 @@ const Header = () => {
                   </span>
                 </Button>{' '}
               </DropdownMenuItem>
+
+              <DropdownMenuItem>
+                <Button
+                  variant="link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/auctions');
+                  }}
+                >
+                  <span className="text-gray-600 hover:text-gray-600 text-sm">
+                    All
+                  </span>
+                </Button>{' '}
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Button
                   variant="link"
@@ -117,6 +142,8 @@ const Header = () => {
           {useraddress ? AddressUtils(useraddress) : 'No Account connected'}
         </Badge>
 
+        {!isPoints.status && <Button onClick={getPoints}> Points </Button>}
+        {isPoints.status && <Badge onClick={getPoints}>{isPoints.points} Points</Badge>}
       </div>
     </div>
   );

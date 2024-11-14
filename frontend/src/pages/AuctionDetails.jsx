@@ -18,19 +18,20 @@ function AuctionDetails() {
   const [isRevealPhaseDone, setRevealPhaseDone] = useState(false);
 
   const address = useSelector((state) => state.address.address);
-  const fetchAuctionDetails = async () => {
-    try {
-      const response = await axios.get(`/auctions/${id}`);
-      console.log(response.data);
-      SetDetails(response.data);
-    } catch (error) {
-      setisError(true);
-      console.error(error);
-    } finally {
-      setisLoading(false);
-    }
-  };
+
   useEffect(() => {
+    const fetchAuctionDetails = async () => {
+      try {
+        const response = await axios.get(`/auctions/${id}`);
+        console.log(response.data);
+        SetDetails(response.data);
+      } catch (error) {
+        setisError(true);
+        console.error(error);
+      } finally {
+        setisLoading(false);
+      }
+    };
     fetchAuctionDetails();
   }, [id]);
   useEffect(() => {
@@ -51,13 +52,18 @@ function AuctionDetails() {
           setisBasePaid(true);
         }
 
-
-        const filter3 = auctionContract.filters.commitAmountPayEvent(address, id);
+        const filter3 = auctionContract.filters.commitAmountPayEvent(
+          address,
+          id
+        );
         const events3 = await auctionContract.queryFilter(filter3, 0, 'latest');
         if (events3.length > 0) {
           setCommitPhaseDone(true);
         }
-        const filter4 = auctionContract.filters.revealPhaseCompleted(address, id);
+        const filter4 = auctionContract.filters.revealPhaseCompleted(
+          address,
+          id
+        );
         const events4 = await auctionContract.queryFilter(filter4, 0, 'latest');
         if (events4.length > 0) {
           setRevealPhaseDone(true);
@@ -87,7 +93,14 @@ function AuctionDetails() {
       </div>
       <div className="w-4/12 h-full flex items-center m-8">
         <CommitReveal
-          props={{ auctionDetails, id, isBasePaid, setisBasePaid ,isCommitPhaseDone ,isRevealPhaseDone  }}
+          props={{
+            auctionDetails,
+            id,
+            isBasePaid,
+            setisBasePaid,
+            isCommitPhaseDone,
+            isRevealPhaseDone,
+          }}
         />
       </div>
     </div>

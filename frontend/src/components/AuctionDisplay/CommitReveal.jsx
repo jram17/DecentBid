@@ -4,6 +4,7 @@ import { BigNumber, ethers } from 'ethers';
 import ContractJson from '@/../contract.json';
 import Reveal from './Reveal';
 import Commit from './Commit';
+import { useSelector } from 'react-redux';
 async function connectWallet() {
   if (window.ethereum) {
     try {
@@ -22,8 +23,17 @@ async function connectWallet() {
 }
 
 const CommitReveal = ({ props }) => {
-  const { auctionDetails, id, isBasePaid, setisBasePaid, isCommitPhaseDone, setCommitPhaseDone, isRevealPhaseDone } = props;
-  console.log(isBasePaid,isCommitPhaseDone);
+  const {
+    auctionDetails,
+    id,
+    isBasePaid,
+    setisBasePaid,
+    isCommitPhaseDone,
+    setCommitPhaseDone,
+    isRevealPhaseDone,
+  } = props;
+  console.log(isBasePaid, isCommitPhaseDone);
+  const address = useSelector((state) => state.address.address);
 
   const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
 
@@ -32,7 +42,6 @@ const CommitReveal = ({ props }) => {
   async function payMinAmount() {
     const signer = await connectWallet();
     if (!signer) return;
-
     const contractAddress = ContractJson.contractAddress;
     const contractABI = ContractJson.abi;
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
@@ -69,29 +78,10 @@ const CommitReveal = ({ props }) => {
         connectWallet={connectWallet}
         id={id}
         setIsRevealEnabled={setIsRevealEnabled}
-      // isCommitPaid={isCommitPaid}
-      // setCommitPaid={setCommitPaid}
-      // isCommitPhaseDone={isCommitPhaseDone}
-      // setCommitPhaseDone={setCommitPhaseDone}
-
+        setCommitPhaseDone={setCommitPhaseDone}
       />
     );
   }
-
-  
-  // auctionDetails.isRevealEnabled ? (
-  //     isBasePaid && isCommitPhaseDone ? (
-  //       <Reveal connectWallet={connectWallet} id={id} />
-  //     ) : (
-  //       <div>
-  //         <h1>You didn&apos;t commit and the commit phase it over</h1>
-  //       </div>
-  //     )
-  //   ) : (
-  //     <div>
-  //       <h1>The auction is not in the reveal phase</h1>
-  //     </div>
-  //   );
 
     if(auctionDetails.isRevealEnabled && isBasePaid && isCommitPhaseDone && !isRevealPhaseDone && !revealDone){
       return(        
@@ -104,7 +94,7 @@ const CommitReveal = ({ props }) => {
       <div>
         <h1>The reveal phase will be started soon</h1>
       </div>
-    )
+    );
   }
 
   if (!auctionDetails.isWinnerAnnounced && isRevealPhaseDone && revealDone) {
@@ -112,7 +102,7 @@ const CommitReveal = ({ props }) => {
       <div>
         <h1>The auction is over. the winner is not annouced yet</h1>
       </div>
-    )
+    );
   }
 
   return (

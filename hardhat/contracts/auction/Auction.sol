@@ -54,7 +54,6 @@ contract Auction {
     }
 
     function AfterReveal(address bidderAddress, bool status) internal {
-        console.log(status);
         if (status) {
             main_parent.increaseCred(bidderAddress, 10, true); // success reveal
         } else {
@@ -126,6 +125,27 @@ contract Auction {
                 ) {
                     _secondlastelement = payable(_winner);
                     _winner = _bidders[i];
+                } else if (
+                    _biddetails[_bidders[i]]._bidamount ==
+                    _biddetails[_winner]._bidamount
+                ) {
+                    uint _winner_cred = main_parent.returnUserCredibilty(
+                        _winner
+                    );
+                    uint _bidders_cred = main_parent.returnUserCredibilty(
+                        _bidders[i]
+                    );
+                    if (_bidders_cred > _winner_cred) {
+                        _secondlastelement = payable(_winner);
+                        _winner = _bidders[i];
+                    } else {
+                        _secondlastelement = _bidders[i];
+                    }
+                } else if (
+                    _biddetails[_bidders[i]]._bidamount >
+                    _biddetails[_secondlastelement]._bidamount
+                ) {
+                    _secondlastelement = _bidders[i];
                 }
             }
         }
@@ -136,6 +156,7 @@ contract Auction {
         );
 
         _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
+
         return _winner;
     }
 
@@ -151,6 +172,7 @@ contract Auction {
                 _bidders[i].transfer(_biddetails[_bidders[i]]._bidamount);
             }
         }
+        main_parent.increaseCred(_winner, 20, true);
         _auctionowner.transfer(_amount_to_be_paid);
         return true;
     }
