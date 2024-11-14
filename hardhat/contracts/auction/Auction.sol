@@ -17,6 +17,8 @@ contract Auction {
     }
 
     address payable[] _bidders;
+    address[] __revealedbidders;
+
     uint256 public _minamount;
     address payable public _auctionowner;
 
@@ -87,6 +89,7 @@ contract Auction {
             AfterReveal(bidderAddress, status);
             _biddetails[bidderAddress]._hasRevealed = true;
             _biddetails[bidderAddress]._bidamount = weiValue;
+            __revealedbidders.push(bidderAddress);
         } else {
             AfterReveal(bidderAddress, status);
         }
@@ -103,59 +106,32 @@ contract Auction {
     function getAuctionWinner() public payable returns (address payable) {
         require(_bidders.length > 0, "No bidding has been produced yet");
 
-        uint256 _length = _bidders.length;
-        _winner = _bidders[0];
-        address payable _secondlastelement;
+        uint revealed_bidders = __revealedbidders.length;
+        require(revealed_bidders > 0, "No revealed bids available");
 
-        if (_length == 1) {
-            _amount_to_be_paid = _biddetails[_winner]._bidamount;
-
-            return _winner;
-        } else if (_length > 1) {
-            _secondlastelement = _bidders[1];
-            for (uint256 i = 1; i < _length; ++i) {
-                if (!_biddetails[_bidders[i]]._hasRevealed) {
-                    emit unRevealed(_bidders[i], _auctionid);
-                    continue;
-                }
-
+        for (uint i = 0; i < revealed_bidders - 1; i++) {
+            for (uint j = i + 1; j < revealed_bidders; j++) {
                 if (
-                    _biddetails[_bidders[i]]._bidamount >
-                    _biddetails[_winner]._bidamount
+                    _biddetails[__revealedbidders[j]]._bidamount >
+                    _biddetails[__revealedbidders[i]]._bidamount
                 ) {
-                    _secondlastelement = payable(_winner);
-                    _winner = _bidders[i];
-                } else if (
-                    _biddetails[_bidders[i]]._bidamount ==
-                    _biddetails[_winner]._bidamount
-                ) {
-                    uint _winner_cred = main_parent.returnUserCredibilty(
-                        _winner
-                    );
-                    uint _bidders_cred = main_parent.returnUserCredibilty(
-                        _bidders[i]
-                    );
-                    if (_bidders_cred > _winner_cred) {
-                        _secondlastelement = payable(_winner);
-                        _winner = _bidders[i];
-                    } else {
-                        _secondlastelement = _bidders[i];
-                    }
-                } else if (
-                    _biddetails[_bidders[i]]._bidamount >
-                    _biddetails[_secondlastelement]._bidamount
-                ) {
-                    _secondlastelement = _bidders[i];
+                    address temp = __revealedbidders[i];
+                    __revealedbidders[i] = __revealedbidders[j];
+                    __revealedbidders[j] = temp;
                 }
             }
         }
 
-        require(
-            _secondlastelement != address(0),
-            "No second highest bidder found"
-        );
+        _winner = payable(__revealedbidders[0]);
+        address payable _secondHighestBidder;
+        if (revealed_bidders == 1) {
+            _secondHighestBidder = _winner;
+            _amount_to_be_paid = _biddetails[_secondHighestBidder]._bidamount;
 
-        _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
+            return _winner;
+        }
+        _secondHighestBidder = payable(__revealedbidders[1]);
+        _amount_to_be_paid = _biddetails[_secondHighestBidder]._bidamount;
 
         return _winner;
     }

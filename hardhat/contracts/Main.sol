@@ -35,7 +35,7 @@ contract Main {
     ) public payable {
         require(msg.value > 0, "Payment must be greater than zero");
 
-        (bool sent, ) = Owner.call{value: msg.value}("");
+        (bool sent, ) = address(this).call{value: msg.value}("");
         require(sent, "Failed to send Ether to Owner");
 
         Auction _auction = new Auction(_minamount, auctionId, msg.sender);
@@ -101,6 +101,7 @@ contract Main {
         string memory auctionId,
         bytes32 hash
     ) public payable onlyBidder(msg.sender, auctionId) {
+        require(msg.value > 0, "Zero cannot be given as bid");
         (bool sent, ) = _auctiondetails[auctionId].contract_address.call{
             value: msg.value
         }("");

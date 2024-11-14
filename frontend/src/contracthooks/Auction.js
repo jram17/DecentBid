@@ -48,13 +48,11 @@ const RevealWinner = async (id) => {
 
         const tx = await auctionContract.getWinner(id);
         const receipt = await tx.wait();
-        console.log(receipt);
         const body = {
             id: id,
             winner: receipt.events[0].args[0],
         }
-        const response = axios.put('/auctions/reveal-winner', body);
-        console.log(response);
+        const response = await axios.put('/auctions/reveal-winner', body);
         if (response.status === 200) {
             return {
                 success: true,
