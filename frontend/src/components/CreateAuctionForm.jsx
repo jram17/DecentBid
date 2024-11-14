@@ -69,8 +69,8 @@ const formSchema = z.object({
       message: 'Description should be at least 20 characters long.',
     })
     .regex(_regex, 'This is not a valid description'),
-  min_eth: z.number().min(0.05, {
-    message: 'Minimum price should be at least 0.05 ETH.',
+  min_eth: z.number().min(0, {
+    message: 'Minimum price should be at least 0 ETH.',
   }),
   cover_image: fileSchema,
   add_images: fileSchema.optional(),
@@ -80,7 +80,7 @@ const formSchema = z.object({
     })
     .refine((date) => {
       const now = new Date();
-      now.setDate(now.getDate() + 1);
+      now.setDate(now.getDate());
       const year = new Date();
       year.setFullYear(year.getFullYear() + 1);
       return date >= now && date < year;

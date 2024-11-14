@@ -37,7 +37,7 @@ contract Auction {
         _auctionid = auctionId;
         _minamount = minamount;
         _auctionowner = payable(auctionCreator);
-        main_parent = Main(msg.sender);
+        main_parent = Main(payable(msg.sender));
     }
 
     modifier canBid(address bidderAddress) {

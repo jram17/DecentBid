@@ -5,6 +5,8 @@ import "./auction/Auction.sol";
 import "hardhat/console.sol";
 
 contract Main {
+    receive() external payable {}
+
     event Winner(address indexed winner, string indexed _auctionid);
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
     event commitAmountPayEvent(
@@ -29,13 +31,11 @@ contract Main {
         Owner = payable(msg.sender);
     }
 
-
-
     function createAuction(
         uint256 _minamount,
         string memory auctionId
     ) public payable {
-        require(msg.value > 0, "Payment must be greater than zero");
+        require(msg.value >= 0, "Payment must be greater than zero");
 
         (bool sent, ) = address(this).call{value: msg.value}("");
         require(sent, "Failed to send Ether to Owner");
