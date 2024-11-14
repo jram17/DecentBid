@@ -12,9 +12,33 @@ import {
 import { Badge } from '../ui/badge';
 import { useSelector } from 'react-redux';
 import { AddressUtils } from '@/utils/AddressUtils';
+import ContractJson from '@/../contract.json';
 const Header = () => {
   const navigate = useNavigate();
   const useraddress = useSelector((state) => state.address.address);
+
+  async function getPoints() {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        const contractAddress = ContractJson.contractAddress;
+        const contractABI = ContractJson.abi;
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+        // cosnt tx =await contract.
+      } catch (error) {
+        console.error('User denied account access', error);
+        return null;
+      }
+    } else {
+      alert('Please install Metamask');
+      return null;
+    }
+  }
+
+
   return (
     <div className="min-w-[100vw] h-[69px] fixed border-b-[0.8px] border-solid border-gray-300 bg-white z-10 flex items-center justify-between px-10">
       <div
@@ -92,6 +116,7 @@ const Header = () => {
         <Badge>
           {useraddress ? AddressUtils(useraddress) : 'No Account connected'}
         </Badge>
+
       </div>
     </div>
   );
