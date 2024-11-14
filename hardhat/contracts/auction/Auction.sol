@@ -120,6 +120,8 @@ contract Auction {
         );
 
         _amount_to_be_paid = _biddetails[_secondlastelement]._bidamount;
+        console.log(_winner);
+        console.log(_amount_to_be_paid);
         return _winner;
     }
 
@@ -128,10 +130,14 @@ contract Auction {
         uint256 _length = _bidders.length;
         for (uint256 i = 0; i < _length; ++i) {
             if (_bidders[i] == _winner) {
+                console.log(_winner);
+                console.log(_amount_to_be_paid);
                 _winner.transfer(
                     _biddetails[_bidders[i]]._bidamount - _amount_to_be_paid
                 );
             } else if (_biddetails[_bidders[i]]._hasRevealed) {
+                console.log(_bidders[i]);
+                console.log(_amount_to_be_paid);
                 _bidders[i].transfer(_biddetails[_bidders[i]]._bidamount);
             }
         }

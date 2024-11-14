@@ -17,15 +17,20 @@ function JoinRoomModal({ auction }) {
   const [isTransferAmount, setTransferAmount] = useState(false);
   const [isRevealWinner, setRevealWinner] = useState(false);
   const [isRevealEnabled, setRevealEnabled] = useState(false);
+  console.log(isRevealWinner);
   useEffect(() => {
     const fetchAuctionStatus = async () => {
       try {
+        console.log(auction);
         if (!address || !auction.auctionid) return;
 
-        if (auction.isWinnedAnnounced) setRevealWinner(true);
+        if (auction.isWinnedAnnounced != 'Yet to be Decided') {
+          console.log('came in');
+          setRevealWinner(true);
+          console.log(isRevealWinner);
+        }
 
         if (auction.isRevealEnabled) setRevealEnabled(true);
-
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         await provider.send('eth_requestAccounts', []);
@@ -80,10 +85,14 @@ function JoinRoomModal({ auction }) {
   };
 
   const RevealWinnerFn = async (id) => {
+    console.log('came in');
     if (isLoading) return;
+    console.log('came in');
+
     try {
       setLoading(true);
       const response = await RevealWinner(id);
+      console.log(response + ' was successfully');
       if (response.success) {
         setWinnerRevealed(true);
       }
@@ -157,7 +166,7 @@ function JoinRoomModal({ auction }) {
           </Button>
           <Button
             onClick={() => {
-              if (isWinnedAnnounced) return;
+              if (isRevealWinner) return;
               return RevealWinnerFn(auction.auctionid);
             }}
           >
