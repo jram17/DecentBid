@@ -32,13 +32,12 @@ const CommitReveal = ({ props }) => {
     setCommitPhaseDone,
     isRevealPhaseDone,
   } = props;
-  console.log(isBasePaid, isCommitPhaseDone);
   const address = useSelector((state) => state.address.address);
 
   const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
 
   const [isRevealEnabled, setIsRevealEnabled] = useState(false);
-  const [revealDone,setRevealDone] = useState(false);
+  const [revealDone, setRevealDone] = useState(false);
   async function payMinAmount() {
     const signer = await connectWallet();
     if (!signer) return;
@@ -47,7 +46,11 @@ const CommitReveal = ({ props }) => {
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     try {
-      const value = ethers.utils.parseEther(minAmount.toString());
+      let amount = '0';
+      if (minAmount) {
+        amount = minAmount.toString();
+      }
+      const value = ethers.utils.parseEther(amount);
       const tx = await contract.payminamount(id, {
         value: value,
       });
@@ -83,11 +86,21 @@ const CommitReveal = ({ props }) => {
     );
   }
 
-    if(auctionDetails.isRevealEnabled && isBasePaid && isCommitPhaseDone && !isRevealPhaseDone && !revealDone){
-      return(        
-      <Reveal connectWallet={connectWallet} id={id} setRevealDone={setRevealDone}/>
-      )
-    } 
+  if (
+    auctionDetails.isRevealEnabled &&
+    isBasePaid &&
+    isCommitPhaseDone &&
+    !isRevealPhaseDone &&
+    !revealDone
+  ) {
+    return (
+      <Reveal
+        connectWallet={connectWallet}
+        id={id}
+        setRevealDone={setRevealDone}
+      />
+    );
+  }
 
   if (!auctionDetails.isRevealEnabled) {
     return (

@@ -78,10 +78,9 @@ contract Auction {
 
     function revealBid(
         address bidderAddress,
-        uint256 bidAmt,
+        uint256 weiValue,
         string memory secretSalt
     ) external canReveal(bidderAddress) {
-        uint256 weiValue = bidAmt * 1e18;
         bytes32 _hashBidAmt = keccak256(abi.encode(weiValue));
         bool status = keccak256(abi.encode(_hashBidAmt, secretSalt)) ==
             _biddetails[bidderAddress]._bidHash;

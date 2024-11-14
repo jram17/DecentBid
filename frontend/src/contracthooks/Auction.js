@@ -3,7 +3,7 @@ import ContractJson from '../../contract.json';
 import axios from 'axios';
 
 const CreateAuction = async (value, auctionId) => {
-    const wei = ethers.utils.parseEther(value.toString());
+    const wei = ethers.utils.parseEther(value.toString() || '0');
 
     try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -27,7 +27,6 @@ const CreateAuction = async (value, auctionId) => {
 
         };
     } catch (error) {
-        console.log(error);
         return {
             success: false,
             message: "Failed to create auction",
@@ -77,7 +76,6 @@ const transferAmount = async (id) => {
 
         const tx = await auctionContract.transferAmount(id);
         const receipt = await tx.wait();
-        console.log(receipt);
 
         return {
             success: true,

@@ -17,14 +17,16 @@ import ContractJson from '@/../contract.json';
 const Header = () => {
   const navigate = useNavigate();
   const useraddress = useSelector((state) => state.address.address);
-  const [isPoints, setPoints] = useState({ status: false, points: '',accCHanged: false });
+  const [isPoints, setPoints] = useState({
+    status: false,
+    points: '',
+    accCHanged: false,
+  });
 
-
-
-  useEffect(()=>{
+  useEffect(() => {
     setPoints({ status: false, points: '', accChanged: false });
     getPoints();
-  },[useraddress])
+  }, [useraddress]);
 
   async function getPoints() {
     if (window.ethereum) {
@@ -35,10 +37,13 @@ const Header = () => {
 
         const contractAddress = ContractJson.contractAddress;
         const contractABI = ContractJson.abi;
-        const contract = new ethers.Contract(contractAddress, contractABI, provider);
+        const contract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          provider
+        );
         const points = await contract.returnUserCredibilty(useraddress);
-        console.log('User Points:', points.toString());
-        console.log(useraddress);
+
         setPoints({ status: true, points: points.toString() });
       } catch (error) {
         console.error('User denied account access', error);
@@ -49,7 +54,6 @@ const Header = () => {
       return null;
     }
   }
-
 
   return (
     <div className="min-w-[100vw] h-[69px] fixed border-b-[0.8px] border-solid border-gray-300 bg-white z-10 flex items-center justify-between px-10">
@@ -144,7 +148,9 @@ const Header = () => {
         </Badge>
 
         {/* {!isPoints.status && <Button onClick={getPoints}> Points </Button>} */}
-        {isPoints.status && <Badge onClick={getPoints}>{isPoints.points} Points</Badge>}
+        {isPoints.status && (
+          <Badge onClick={getPoints}>{isPoints.points} Points</Badge>
+        )}
       </div>
     </div>
   );

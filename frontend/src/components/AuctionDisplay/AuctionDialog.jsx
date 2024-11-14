@@ -17,11 +17,9 @@ function JoinRoomModal({ auction }) {
   const [isTransferAmount, setTransferAmount] = useState(false);
   const [isRevealWinner, setRevealWinner] = useState(false);
   const [isRevealEnabled, setRevealEnabled] = useState(false);
-  console.log(isRevealWinner);
   useEffect(() => {
     const fetchAuctionStatus = async () => {
       try {
-        console.log(auction);
         if (!address || !auction.auctionid) return;
 
         if (auction.isWinnedAnnounced != 'Yet to be Decided') {
@@ -83,16 +81,13 @@ function JoinRoomModal({ auction }) {
   };
 
   const RevealWinnerFn = async (id) => {
-    console.log('came in');
     if (isLoading) return;
-    console.log('came in');
 
     try {
       setLoading(true);
       const response = await RevealWinner(id);
-      console.log(response + ' was successfully');
       if (response.success) {
-        setWinnerRevealed(true);
+        setRevealWinner(true);
       }
     } catch (error) {
       console.error(error);

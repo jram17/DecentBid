@@ -23,7 +23,6 @@ function AuctionDetails() {
     const fetchAuctionDetails = async () => {
       try {
         const response = await axios.get(`/auctions/${id}`);
-        console.log(response.data);
         SetDetails(response.data);
       } catch (error) {
         setisError(true);

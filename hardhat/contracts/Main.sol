@@ -24,7 +24,7 @@ contract Main {
         Auction auction;
     }
     mapping(string => AuctionHistory) public _auctiondetails;
-    mapping(address => uint256) public userCrediblity;
+    mapping(address => int256) public userCrediblity;
     address payable public Owner;
 
     constructor() {
@@ -133,7 +133,7 @@ contract Main {
         return _address.balance;
     }
 
-    function returnUserCredibilty(address _address) public view returns (uint) {
+    function returnUserCredibilty(address _address) public view returns (int) {
         return userCrediblity[_address];
     }
 
@@ -149,7 +149,7 @@ contract Main {
 
     function increaseCred(
         address bidderAddress,
-        uint256 points,
+        int256 points,
         bool status
     ) public {
         if (status) {

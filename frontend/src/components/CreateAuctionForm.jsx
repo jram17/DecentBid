@@ -80,7 +80,7 @@ const formSchema = z.object({
     })
     .refine((date) => {
       const now = new Date();
-      now.setDate(now.getDate());
+      now.setDate(now.getDate() - 1);
       const year = new Date();
       year.setFullYear(year.getFullYear() + 1);
       return date >= now && date < year;
@@ -151,14 +151,14 @@ export function AuctionForm() {
             )
           )
         : [];
-
+      let min_eth = data.min_eth ? data.min_eth : 0;
       const auctionData = {
         auctionname: data.auctionname,
         auctionId,
         address: owner_address,
         auctionproduct: data.auctionproduct,
         description: data.description,
-        min_eth: data.min_eth,
+        min_eth: min_eth,
         cover_image: coverImageUrl,
         add_images: additionalImageUrls,
         start_of_auction: data.start_of_auction,

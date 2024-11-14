@@ -34,7 +34,7 @@ const Commit = ({
     try {
       const value = ethers.utils.parseEther(num.toString());
       const tx = await contract.payCommitBidAmount(id, totalHash, { value });
-      await tx.wait();
+      const receipt = await tx.wait();
       const response = await axios.put('/auctions/user-auctions', {
         address,
         auctionId: id,

@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-ethers");
 require("dotenv").config();
 /** @type import('hardhat/config').HardhatUserConfig */
 const { ALCHEMY_SEPHOLIA_URL, PRIVATE_KEY } = process.env
