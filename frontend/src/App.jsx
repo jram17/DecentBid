@@ -16,7 +16,6 @@ import Auctions from './pages/Auctions';
 import '@fontsource-variable/reddit-sans';
 import AuctionDetails from './pages/AuctionDetails';
 import Profile from './pages/Profile';
-import UserAuctions from './pages/UserAuctions';
 import OwningAuctions from './pages/OwningAuctions';
 import AuthProvider from './providers/AuthProvider';
 const router = createBrowserRouter(
@@ -55,14 +54,7 @@ const router = createBrowserRouter(
           </AuthProvider>
         }
       />
-      <Route
-        path="/auctions/user-auctions"
-        element={
-          <AuthProvider>
-            <UserAuctions />
-          </AuthProvider>
-        }
-      />
+
       <Route
         path="/auctions/owning-auctions"
         element={

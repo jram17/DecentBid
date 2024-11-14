@@ -48,9 +48,11 @@ const userAuctions = async (req, res) => {
             return res.status(400).json({ message: 'User auctions not found' });
         }
 
-        const AuctionDetails = await UserAuctions.map
-
-        res.status(200).json(userAuctions);
+        const auctionDetails = await Promise.all(userAuctions.auctionIds.map(async (auction) => {
+            const _auctionDetails = await AuctionDetails.findOne({ auctionId: auction });
+            return _auctionDetails;
+        }));
+        res.status(200).json(auctionDetails);
 
     } catch (error) {
         console.error('Error fetching user auctions:', error);

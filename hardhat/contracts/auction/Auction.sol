@@ -6,7 +6,7 @@ import "../Main.sol";
 contract Auction {
     receive() external payable {}
 
-    event unRevealed(address indexed bidder, string indexed _auctionid);
+    event unRevealed(address indexed bidder, string _auctionid);
 
     struct BidDetails {
         bytes32 _bidHash;
