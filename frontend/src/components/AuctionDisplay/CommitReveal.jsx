@@ -31,13 +31,13 @@ const CommitReveal = ({ props }) => {
     isCommitPhaseDone,
     setCommitPhaseDone,
     isRevealPhaseDone,
+    setRevealPhaseDone,
   } = props;
   const address = useSelector((state) => state.address.address);
 
   const minAmount = auctionDetails.min_eth || auctionDetails.max_eth;
 
   const [isRevealEnabled, setIsRevealEnabled] = useState(false);
-  const [revealDone, setRevealDone] = useState(false);
   async function payMinAmount() {
     const signer = await connectWallet();
     if (!signer) return;
@@ -98,6 +98,7 @@ const CommitReveal = ({ props }) => {
         connectWallet={connectWallet}
         id={id}
         setRevealDone={setRevealDone}
+        setRevealPhaseDone={setRevealPhaseDone}
       />
     );
   }
@@ -110,7 +111,7 @@ const CommitReveal = ({ props }) => {
     );
   }
 
-  if (!auctionDetails.isWinnerAnnounced && isRevealPhaseDone && revealDone) {
+  if (!auctionDetails.isWinnerAnnounced && isRevealPhaseDone) {
     return (
       <div>
         <h1>The auction is over. the winner is not annouced yet</h1>

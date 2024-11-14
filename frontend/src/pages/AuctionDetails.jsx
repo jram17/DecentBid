@@ -99,6 +99,7 @@ function AuctionDetails() {
             setisBasePaid,
             isCommitPhaseDone,
             isRevealPhaseDone,
+            setRevealPhaseDone,
           }}
         />
       </div>

@@ -4,7 +4,7 @@ import { BigNumber, ethers, utils } from 'ethers';
 const { keccak256, defaultAbiCoder, parseUnits } = utils;
 
 import ContractJson from '@/../contract.json';
-const Reveal = ({ connectWallet, id, setRevealDone }) => {
+const Reveal = ({ connectWallet, id, setRevealPhaseDone }) => {
   const {
     register,
     handleSubmit,
@@ -26,7 +26,7 @@ const Reveal = ({ connectWallet, id, setRevealDone }) => {
       await tx.wait();
 
       alert('Reveal successfull!!');
-      setRevealDone(true); //setting the use state
+      setRevealPhaseDone(true); //setting the use state
     } catch (error) {
       console.error('error while revealing the bid amount', error);
       alert('Reveal failed!! !');
