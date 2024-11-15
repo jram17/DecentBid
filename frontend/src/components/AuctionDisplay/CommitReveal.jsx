@@ -90,14 +90,12 @@ const CommitReveal = ({ props }) => {
     auctionDetails.isRevealEnabled &&
     isBasePaid &&
     isCommitPhaseDone &&
-    !isRevealPhaseDone &&
-    !revealDone
+    !isRevealPhaseDone
   ) {
     return (
       <Reveal
         connectWallet={connectWallet}
         id={id}
-        setRevealDone={setRevealDone}
         setRevealPhaseDone={setRevealPhaseDone}
       />
     );

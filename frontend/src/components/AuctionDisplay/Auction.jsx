@@ -41,7 +41,11 @@ const Auction = (props) => {
           </CardDescription>
           <CardDescription className="flex gap-1">
             Winner:
-            {props.props.isWinnerAnnouced && <span>{'winner'}</span>}
+            {props.props.isWinnerAnnounced ? (
+              <span>{props.props.winner}</span>
+            ) : (
+              <span>Yet to be announced</span>
+            )}
           </CardDescription>
           <div>
             {isPictures ? (

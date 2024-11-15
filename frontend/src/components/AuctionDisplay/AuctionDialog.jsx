@@ -88,6 +88,9 @@ function JoinRoomModal({ auction }) {
       const response = await RevealWinner(id);
       if (response.success) {
         setRevealWinner(true);
+        toast({
+          title: 'Winner revealed successfully',
+        });
       }
     } catch (error) {
       console.error(error);
@@ -104,6 +107,9 @@ function JoinRoomModal({ auction }) {
       setLoading(true);
       const response = await transferAmount(id);
       if (response.success) {
+        toast({
+          title: 'Amount transfer successfully',
+        });
         setTransferAmount(true);
       } else {
         setError(true);

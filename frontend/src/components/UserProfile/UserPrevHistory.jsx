@@ -25,7 +25,7 @@ const UserPrevHistory = () => {
         );
         const filter = auctionContract.filters.Winner(address, null);
         const events = await auctionContract.queryFilter(filter, 0, 'latest');
-
+        console.log(events);
         setAuctions(() => {
           return events.map((event) => ({
             id: event.args.auctionId,

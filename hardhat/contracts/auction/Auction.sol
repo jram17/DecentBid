@@ -125,11 +125,23 @@ contract Auction {
         address payable _secondHighestBidder;
         if (revealed_bidders == 1) {
             _secondHighestBidder = _winner;
-            _amount_to_be_paid = _biddetails[_secondHighestBidder]._bidamount;
-
-            return _winner;
+        } else {
+            _secondHighestBidder = payable(__revealedbidders[1]);
+            if (
+                _biddetails[_winner]._bidamount ==
+                _biddetails[_secondHighestBidder]._bidamount
+            ) {
+                if (
+                    main_parent.returnUserCredibilty(_secondHighestBidder) >
+                    main_parent.returnUserCredibilty(_winner)
+                ) {
+                    address temp = _winner;
+                    _winner = _secondHighestBidder;
+                    _secondHighestBidder = payable(temp);
+                }
+            }
         }
-        _secondHighestBidder = payable(__revealedbidders[1]);
+
         _amount_to_be_paid = _biddetails[_secondHighestBidder]._bidamount;
 
         return _winner;

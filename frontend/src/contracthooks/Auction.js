@@ -47,6 +47,7 @@ const RevealWinner = async (id) => {
 
         const tx = await auctionContract.getWinner(id);
         const receipt = await tx.wait();
+        console.log(receipt);
         const body = {
             id: id,
             winner: receipt.events[0].args[0],
@@ -76,7 +77,7 @@ const transferAmount = async (id) => {
 
         const tx = await auctionContract.transferAmount(id);
         const receipt = await tx.wait();
-
+        console.log(receipt);
         return {
             success: true,
             message: "Amount transferred successfully",

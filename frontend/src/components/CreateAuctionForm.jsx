@@ -250,7 +250,7 @@ export function AuctionForm() {
           name="min_eth"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Maximum Product Value</FormLabel>
+              <FormLabel>Minimum Product Value</FormLabel>
               <FormControl>
                 <Input
                   type="number"

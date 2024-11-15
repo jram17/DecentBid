@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 contract Main {
     receive() external payable {}
 
-    event Winner(address indexed winner, string indexed _auctionid);
+    event Winner(address indexed winner, string _auctionid);
     event BaseAmountPayEvent(address indexed bidder, string indexed auctionId);
     event commitAmountPayEvent(
         address indexed bidder,
