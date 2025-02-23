@@ -64,7 +64,7 @@ const UserPrevHistory = () => {
         </nav>
       )}
       {!isLoading && !isError && auctions.length === 0 && (
-        <p>No auctions found.</p>
+        <p>No auctions found. </p>
       )}
     </div>
   );

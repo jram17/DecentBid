@@ -7,6 +7,9 @@ import { Button } from '../ui/button';
 import { getHashInWei, getTotalHash } from '@/utils/HashUtils';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { Lock, Unlock } from 'lucide-react';
+import { toast } from 'sonner';
+
 const Commit = ({
   connectWallet,
   id,
@@ -59,6 +62,23 @@ const Commit = ({
     //   return;
     // }
 
+
+
+    console.log(data);
+
+    if(data.bidHash === undefined){
+      toast.error("Please, calculate Hash !", {
+        style: { backgroundColor: "#dc2626", color: "#fff" }, // Tailwind red-600
+        iconTheme: { primary: "#fff", secondary: "#dc2626" }, 
+      });
+      
+      return;
+    }
+    
+    // changed 
+    // setIsRevealEnabled(true);
+    
+
     const { bidHash, secretSalt } = data;
     const totalHash = getTotalHash(bidHash, secretSalt);
 
@@ -74,6 +94,7 @@ const Commit = ({
       // await tx.wait();
       // alert('Commit successful!');
       await payCommitAmount(num, totalHash);
+      toast.success("Commit successful!");
     } catch (error) {
       console.error(error.message);
       alert('Commit failed! Please try again.');
@@ -84,8 +105,7 @@ const Commit = ({
     try {
       const hashval = getHashInWei(num);
       setHashval(hashval);
-      setValue('bidHash', hashval);
-      // await payCommitAmount(num);
+      setValue('bidHash', hashval); // Update form value
     } catch (error) {
       console.error('Could not commit the bid amount', error);
       alert('Paying commit bid failed!');
@@ -93,46 +113,52 @@ const Commit = ({
   };
 
   return (
-    <div>
-      <h1>Welcome to the commit phase</h1>
+    <div className="max-w-md  p-6 border border-gray-200 rounded-lg shadow-lg bg-white">
+      <h1 className="text-2xl font-semibold text-purple-700">Commit Phase</h1>
+      <p className="text-muted-foreground">
+        Welcome to the commit phase! Enter your bid and secret salt below.
+      </p>
 
-      <p>Enter your bid and secret salt here:</p>
-      <Input value={num} onChange={(e) => setNum(e.target.value)} />
-      <Button type="button" onClick={() => getNumberHash()}>
-        Calculate hash of number
-      </Button>
+      <div className="mt-4">
+        <label className="font-semibold">Your Bid</label>
+        <input
+          type="number"
+          value={num}
+          onChange={(e) => setNum(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+      </div>
+
+      <button
+        type="button"
+        className="w-full mt-3 px-4 py-2 border border-gray-400 bg-gray-100 rounded-lg flex items-center justify-center
+         text-gray-700 hover:bg-gray-200 transition-all duration-300"
+        onClick={getNumberHash}
+      >
+        <span className="mr-2">#</span> Calculate hash of number
+      </button>
+
+      {hashval && (
+        <div className="flex flex-col mt-4">
+          <label className="block font-semibold">Hash Output</label>
+          {/* mt-3 p-3 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-800 */}
+          <div className='mt-1 border border-gray-300  p-3  rounded-lg text-sm text-gray-800'>
+            <p className="break-all">{hashval}</p>
+          </div>
+
+        </div>
+      )}
 
       <form
         onSubmit={handleSubmit(onSubmitCommitBid)}
-        className="gap-4 flex flex-col w-full max-w-md m-auto p-6 border border-gray-200 rounded-lg shadow-lg bg-white"
+        className="mt-4 flex flex-col gap-3"
       >
         <div>
+          <label className="font-semibold">Secret Salt</label>
           <input
             type="text"
-            placeholder="BID amount hash"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={hashval}
-            readOnly
-            {...register('bidHash', {
-              required: 'Bid hash is required',
-              pattern: {
-                value: /^0x[a-fA-F0-9]{64}$/,
-                message: 'Invalid hash format. Must be 64-character hex.',
-              },
-            })}
-          />
-          {errors.bidHash && (
-            <p className="text-red-600 mt-1 text-sm">
-              {errors.bidHash.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <input
-            type="text"
-            placeholder="Secret Salt"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your secret salt"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             {...register('secretSalt', {
               required: 'Secret salt is required',
               minLength: {
@@ -142,20 +168,22 @@ const Commit = ({
             })}
           />
           {errors.secretSalt && (
-            <p className="text-red-600 mt-1 text-sm">
-              {errors.secretSalt.message}
-            </p>
+            <p className="text-red-600 text-sm">{errors.secretSalt.message}</p>
           )}
         </div>
 
         <button
           type="submit"
-          className="m-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105"
+          className="w-full flex flex-row justify-center items-center gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white shadow-md group p-3 rounded-lg"
         >
+          <Lock className='w-4 h-4 mr-2 transition-transform group-hover:scale-110'/>
           COMMIT BID
         </button>
       </form>
     </div>
+
+
+
   );
 };
 

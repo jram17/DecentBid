@@ -123,6 +123,7 @@ export function AuctionForm() {
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     try {
       const AuctionDeploy = await CreateAuction(data.min_eth, auctionId);
       if (AuctionDeploy.success) {
@@ -198,160 +199,316 @@ export function AuctionForm() {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="auctionname"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>AuctionName</FormLabel>
-              <FormControl>
-                <Input placeholder="Auction Name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="auctionproduct"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product For Auction</FormLabel>
-              <FormControl>
-                <Input placeholder="Auction Product" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    // <Form {...form}>
+    //   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    //     <FormField
+    //       control={form.control}
+    //       name="auctionname"
+    //       render={({ field }) => (
+    //         <FormItem>
+    //           <FormLabel>AuctionName</FormLabel>
+    //           <FormControl>
+    //             <Input placeholder="Auction Name" {...field} />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+    //     <FormField
+    //       control={form.control}
+    //       name="auctionproduct"
+    //       render={({ field }) => (
+    //         <FormItem>
+    //           <FormLabel>Product For Auction</FormLabel>
+    //           <FormControl>
+    //             <Input placeholder="Auction Product" {...field} />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Describe the product</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe"
-                  className="resize-y min-h-[30vh]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    //     <FormField
+    //       control={form.control}
+    //       name="description"
+    //       render={({ field }) => (
+    //         <FormItem>
+    //           <FormLabel>Describe the product</FormLabel>
+    //           <FormControl>
+    //             <Textarea
+    //               placeholder="Describe"
+    //               className="resize-y min-h-[30vh]"
+    //               {...field}
+    //             />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
 
-        <FormField
-          control={form.control}
-          name="min_eth"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Minimum Product Value</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  {...field}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                />
-              </FormControl>
-              <FormDescription>
-                the min amount should be paid while registering the product
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    //     <FormField
+    //       control={form.control}
+    //       name="min_eth"
+    //       render={({ field }) => (
+    //         <FormItem>
+    //           <FormLabel>Minimum Product Value</FormLabel>
+    //           <FormControl>
+    //             <Input
+    //               type="number"
+    //               {...field}
+    //               onChange={(e) => field.onChange(parseFloat(e.target.value))}
+    //             />
+    //           </FormControl>
+    //           <FormDescription>
+    //             the min amount should be paid while registering the product
+    //           </FormDescription>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
 
-        <FormField
-          control={form.control}
-          name="cover_image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cover Image</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/jpeg, image/png"
-                  onChange={(e) => handleFileChange(e, field)}
-                />
-              </FormControl>
-              <FormDescription>Accepted types: jpg, jpeg, png</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    //     <FormField
+    //       control={form.control}
+    //       name="cover_image"
+    //       render={({ field }) => (
+    //         <FormItem>
+    //           <FormLabel>Cover Image</FormLabel>
+    //           <FormControl>
+    //             <Input
+    //               type="file"
+    //               accept="image/jpeg, image/png"
+    //               onChange={(e) => handleFileChange(e, field)}
+    //             />
+    //           </FormControl>
+    //           <FormDescription>Accepted types: jpg, jpeg, png</FormDescription>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
 
-        <FormField
-          control={form.control}
-          name="add_images"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Additional Images</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  multiple
-                  accept="image/jpeg, image/png"
-                  onChange={(e) => handleFileChange(e, field)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    //     <FormField
+    //       control={form.control}
+    //       name="add_images"
+    //       render={({ field }) => (
+    //         <FormItem>
+    //           <FormLabel>Additional Images</FormLabel>
+    //           <FormControl>
+    //             <Input
+    //               type="file"
+    //               multiple
+    //               accept="image/jpeg, image/png"
+    //               onChange={(e) => handleFileChange(e, field)}
+    //             />
+    //           </FormControl>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
 
-        <FormField
-          control={form.control}
-          name="start_of_auction"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Start of Auction</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={'outline'}
-                      className={cn(
-                        'w-[240px] pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date < new Date() + 1}
-                    initialFocus
+    //     <FormField
+    //       control={form.control}
+    //       name="start_of_auction"
+    //       render={({ field }) => (
+    //         <FormItem className="flex flex-col">
+    //           <FormLabel>Start of Auction</FormLabel>
+    //           <Popover>
+    //             <PopoverTrigger asChild>
+    //               <FormControl>
+    //                 <Button
+    //                   variant={'outline'}
+    //                   className={cn(
+    //                     'w-[240px] pl-3 text-left font-normal',
+    //                     !field.value && 'text-muted-foreground'
+    //                   )}
+    //                 >
+    //                   {field.value ? (
+    //                     format(field.value, 'PPP')
+    //                   ) : (
+    //                     <span>Pick a date</span>
+    //                   )}
+    //                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+    //                 </Button>
+    //               </FormControl>
+    //             </PopoverTrigger>
+    //             <PopoverContent className="w-auto p-0" align="start">
+    //               <Calendar
+    //                 mode="single"
+    //                 selected={field.value}
+    //                 onSelect={field.onChange}
+    //                 disabled={(date) => date < new Date() + 1}
+    //                 initialFocus
+    //               />
+    //             </PopoverContent>
+    //           </Popover>
+    //           <FormDescription>
+    //             Auction can be only scheduled for future
+    //           </FormDescription>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+
+    //     <Button type="submit" disabled={isLoading}>
+    //       {isLoading ? 'Submitting...' : 'Submit'}
+    //     </Button>
+    //     {isError && <p className="text-red-500">{error}</p>}
+    //   </form>
+    // </Form>
+
+
+
+
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Create Auction</h2>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Auction Name */}
+          <FormField
+            control={form.control}
+            name="auctionname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Auction Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter auction name" {...field} className="input-field" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Auction Product */}
+          <FormField
+            control={form.control}
+            name="auctionproduct"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Product for Auction</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter product name" {...field} className="input-field" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Description */}
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Product Description</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Describe the product" className="resize-y min-h-[90px] input-field" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Minimum Product Value */}
+          <FormField
+            control={form.control}
+            name="min_eth"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Minimum Product Value</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                    className="input-field"
                   />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Auction can be only scheduled for future
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                </FormControl>
+                <FormDescription className="text-sm text-gray-500">
+                  The minimum amount should be paid while registering the product.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Submitting...' : 'Submit'}
-        </Button>
-        {isError && <p className="text-red-500">{error}</p>}
-      </form>
-    </Form>
+          {/* Cover Image Upload */}
+          <FormField
+            control={form.control}
+            name="cover_image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cover Image</FormLabel>
+                <FormControl>
+                  <Input type="file" accept="image/jpeg, image/png" onChange={(e) => handleFileChange(e, field)} />
+                </FormControl>
+                <FormDescription className="text-sm text-gray-500">Accepted formats: JPG, PNG</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Additional Images Upload */}
+          <FormField
+            control={form.control}
+            name="add_images"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Additional Images</FormLabel>
+                <FormControl>
+                  <Input type="file" multiple accept="image/jpeg, image/png" onChange={(e) => handleFileChange(e, field)} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Start of Auction */}
+          <FormField
+            control={form.control}
+            name="start_of_auction"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Start of Auction</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full px-4 py-2 border rounded-lg flex justify-between items-center text-gray-700 bg-gray-50 hover:bg-gray-100",
+                          !field.value && "text-gray-400"
+                        )}
+                      >
+                        {field.value ? format(field.value, "PPP") : "Pick a date"}
+                        <CalendarIcon className="h-5 w-5 text-gray-500" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormDescription className="text-sm text-gray-500">The auction must be scheduled for a future date.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Submit Button */}
+          <Button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300" disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Submit Auction"}
+          </Button>
+
+          {/* Error Message */}
+          {isError && <p className="text-red-500 text-center">{error}</p>}
+        </form>
+      </Form>
+    </div>
   );
 }

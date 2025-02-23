@@ -43,6 +43,7 @@ const userAuctions = async (req, res) => {
         }
 
         const userAuctions = await UserAuctions.findOne({ address });
+        console.log(userAuctions)
 
         if (!userAuctions) {
             return res.status(400).json({ message: 'User auctions not found' });

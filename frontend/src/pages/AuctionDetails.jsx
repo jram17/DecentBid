@@ -24,6 +24,7 @@ function AuctionDetails() {
       try {
         const response = await axios.get(`/auctions/${id}`);
         SetDetails(response.data);
+        console.log({message:"hit",response:response.data});
       } catch (error) {
         setisError(true);
         console.error(error);
@@ -86,7 +87,7 @@ function AuctionDetails() {
       </div>
     );
   return (
-    <div className="flex">
+    <div className="flex ">
       <div className="w-8/12 h-full flex items-center">
         <Auction props={auctionDetails} />
       </div>

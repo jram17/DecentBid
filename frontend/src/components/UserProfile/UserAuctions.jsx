@@ -33,10 +33,12 @@ const UserAuctions = () => {
   if (isLoading) return <div>Loading ......</div>;
   if (error) return <div>Error: {error}</div>;
   return (
-    <div className="w-full grid grid-cols-3 gap-5">
-      {auctions.map((auction, index) => (
-        <AuctionCard auction={auction} key={index} />
-      ))}
+    <div className="w-full flex justify-center">
+      <div className="grid grid-cols-3 gap-10 ">
+        {auctions.map((auction, index) => (
+          <AuctionCard auction={auction} key={index} />
+        ))}
+      </div>
     </div>
   );
 };

@@ -11,6 +11,7 @@ function Auctions() {
       try {
         const response = await axios.get('/auctions');
         setAuctions(response.data);
+        // console.log(response.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -24,10 +25,12 @@ function Auctions() {
     return <div className="text-center text-xl text-gray-600">Loading...</div>;
 
   return (
-    <div className="p-8  min-h-screen">
-      <h1 className="text-[#002B5B] font-semibold text-3xl mb-6">Auctions</h1>
+    <div className="p-8  min-h-screen flex flex-col items-center">
+      <div className='p-2'><h1 className="text-[#002B5B] font-semibold text-3xl mb-6">Auctions</h1></div>
+      
       {auctions.length > 0 ? (
         <ListAuction auctions={auctions} />
+        
       ) : (
         <div className="text-gray-500 italic">No auctions available...</div>
       )}

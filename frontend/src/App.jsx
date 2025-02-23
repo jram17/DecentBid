@@ -18,6 +18,7 @@ import AuctionDetails from './pages/AuctionDetails';
 import Profile from './pages/Profile';
 import OwningAuctions from './pages/OwningAuctions';
 import AuthProvider from './providers/AuthProvider';
+import { UserAuction } from './pages/user-auctions';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -63,6 +64,13 @@ const router = createBrowserRouter(
           </AuthProvider>
         }
       />
+
+      <Route path='/auctions/user-auctions'
+        element={
+          <AuthProvider>
+            <UserAuction />
+          </AuthProvider>
+        }/>
     </Route>
   )
 );

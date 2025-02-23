@@ -12,11 +12,15 @@ const ListAuction = ({ auctions }) => {
   }
 
   return (
-    <div className="w-full grid grid-cols-3 gap-5">
-      {auctions.map((auction, index) => (
-        <AuctionCard auction={auction} key={index} />
-      ))}
-    </div>
+<div className="w-full flex justify-center">
+  <div className="grid grid-cols-3 gap-10 ">
+    {auctions.map((auction, index) => (
+      <AuctionCard auction={auction} key={index} />
+    ))}
+  </div>
+</div>
+
+
   );
 };
 

@@ -1,0 +1,43 @@
+
+import axios from 'axios';
+import ListAuction from '@/components/ListAuction/ListAuction';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+export function UserAuction(){
+    const [auctions, setAuctions] = useState([]);
+    const [isLoading, setisLoading] = useState(true);
+    const address = useSelector((state) => state.address.address);
+
+  
+    useEffect(() => {
+      const fetchAuctionDetails = async () => {
+        try {
+            console.log(address)
+          const response = await axios.get(`/auctions/user-auctions/${address}`);
+          setAuctions(response.data);
+          console.log(response.data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setisLoading(false);
+        }
+      };
+      fetchAuctionDetails();
+    }, []);
+  
+    if (isLoading)
+      return <div className="text-center text-xl text-gray-600">Loading...</div>;
+  
+    return (
+      <div className="p-8  min-h-screen flex flex-col items-center">
+        <div className='p-2'><h1 className="text-[#002B5B] font-semibold text-3xl mb-6">Auctions</h1></div>
+        
+        {auctions.length > 0 ? (
+          <ListAuction auctions={auctions} />
+          
+        ) : (
+          <div className="text-gray-500 italic">No auctions available...</div>
+        )}
+      </div>
+    );
+}
