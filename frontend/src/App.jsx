@@ -19,7 +19,7 @@ import Profile from './pages/Profile';
 import OwningAuctions from './pages/OwningAuctions';
 import AuthProvider from './providers/AuthProvider';
 import { UserAuction } from './pages/user-auctions';
-import { envconfig } from 'envconfig';
+import { envconfig } from '../envconfig';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
