@@ -155,7 +155,7 @@ export function AuctionForm() {
       };
 
       const response = await axios.post(
-        'http://localhost:3000/create-auction',
+        '/create-auction',
         auctionData
       );
       if (response.status === 201) {

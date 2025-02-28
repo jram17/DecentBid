@@ -19,6 +19,7 @@ import Profile from './pages/Profile';
 import OwningAuctions from './pages/OwningAuctions';
 import AuthProvider from './providers/AuthProvider';
 import { UserAuction } from './pages/user-auctions';
+import { envconfig } from 'envconfig';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -76,7 +77,7 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  axios.defaults.baseURL = 'http://localhost:3000';
+  axios.defaults.baseURL = envconfig.VITE_BACKEND_URI;
   const dispatch = useDispatch();
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
