@@ -63,7 +63,7 @@ const Header = () => {
       >
         <img src={logo} alt="Logo" className="w-[50px] h-[50px] mr-3" />
         <div className="text-[#002B5B] font-semibold text-2xl -mt-2">
-          DecAuction
+          DecentBid
         </div>
       </div>
 

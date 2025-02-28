@@ -25,6 +25,9 @@ contract Main {
     }
     mapping(string => AuctionHistory) public _auctiondetails;
     mapping(address => int256) public userCrediblity;
+    mapping(address =>int256) public userAuctionBid;
+    mapping(address=>int256) public userAuctionWin;
+
     address payable public Owner;
 
     constructor() {
@@ -137,6 +140,14 @@ contract Main {
         return userCrediblity[_address];
     }
 
+    function returnUserAuctionBids(address _address) public view returns (int){
+        return userAuctionBid[_address];
+    }
+    function returnUserAuctionWins(address _address) public view returns (int){
+        return userAuctionWin[_address];
+    }
+
+
     function transferAmount(string memory _auctionId) external {
         require(
             msg.sender == _auctiondetails[_auctionId].owner,
@@ -158,4 +169,13 @@ contract Main {
             userCrediblity[bidderAddress] -= points;
         }
     }
+
+    function increaseUserAuctionBid(address bidderAddress)public{
+        userAuctionBid[bidderAddress]+=1;
+    }
+    function increaseUserAuctionWin(address bidderAddress)public{
+        userAuctionWin[bidderAddress]+=1;
+    }
+
+    
 }

@@ -47,7 +47,7 @@ const UserPrevHistory = () => {
 
   return (
     <div>
-      {isLoading && <p>Loading...</p>}
+      {/* {isLoading && <p>Loading...</p>} */}
       {isError && <p>Error fetching details</p>}
       {!isLoading && !isError && auctions.length > 0 && (
         <nav>

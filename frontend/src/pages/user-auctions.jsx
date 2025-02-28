@@ -30,7 +30,7 @@ export function UserAuction(){
   
     return (
       <div className="p-8  min-h-screen flex flex-col items-center">
-        <div className='p-2'><h1 className="text-[#002B5B] font-semibold text-3xl mb-6">Auctions</h1></div>
+        <div className='p-2'><h1 className="text-white font-semibold text-3xl mb-6">Auctions</h1></div>
         
         {auctions.length > 0 ? (
           <ListAuction auctions={auctions} />

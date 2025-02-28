@@ -74,6 +74,7 @@ contract Auction {
         _bidders.push(payable(_bidderAddress));
         _biddetails[_bidderAddress]._hasBid = true;
         _biddetails[_bidderAddress]._bidHash = hash;
+        main_parent.increaseUserAuctionBid(_bidderAddress);
     }
 
     function revealBid(
@@ -143,6 +144,7 @@ contract Auction {
         }
 
         _amount_to_be_paid = _biddetails[_secondHighestBidder]._bidamount;
+        main_parent.increaseUserAuctionWin(_secondHighestBidder);
 
         return _winner;
     }

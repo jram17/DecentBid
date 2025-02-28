@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import AuctionCard from '../ListAuction/AuctionCard';
 import { useSelector } from 'react-redux';
+import AuctionCard from '../ListAuction/AuctionCard';
 import { Card } from '../ui/card';
 const UserAuctions = () => {
   const [auctions, setAuctions] = useState([]);

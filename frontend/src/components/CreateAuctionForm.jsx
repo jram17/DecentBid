@@ -74,17 +74,7 @@ const formSchema = z.object({
   }),
   cover_image: fileSchema,
   add_images: fileSchema.optional(),
-  start_of_auction: z
-    .date({
-      required_error: 'Start date is required.',
-    })
-    .refine((date) => {
-      const now = new Date();
-      now.setDate(now.getDate() - 1);
-      const year = new Date();
-      year.setFullYear(year.getFullYear() + 1);
-      return date >= now && date < year;
-    }, 'The start of auction must be at least one day in the future.'),
+
 });
 
 export function AuctionForm() {
@@ -102,7 +92,6 @@ export function AuctionForm() {
       auctionproduct: '',
       description: '',
       min_eth: 0,
-      start_of_auction: null,
     },
   });
   const auctionId = nanoid();
@@ -162,7 +151,7 @@ export function AuctionForm() {
         min_eth: min_eth,
         cover_image: coverImageUrl,
         add_images: additionalImageUrls,
-        start_of_auction: data.start_of_auction,
+         start_of_auction: new Date() ,
       };
 
       const response = await axios.post(
@@ -463,7 +452,7 @@ export function AuctionForm() {
           />
 
           {/* Start of Auction */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="start_of_auction"
             render={({ field }) => (
@@ -498,7 +487,7 @@ export function AuctionForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* Submit Button */}
           <Button type="submit" className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300" disabled={isLoading}>

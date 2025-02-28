@@ -7,9 +7,9 @@ module.exports = {
   solidity: "0.8.27",
   networks: {
     hardhat: {},
-    // sepolia: {
-    //   url: ALCHEMY_SEPHOLIA_URL,
-    //   accounts: [`0x${PRIVATE_KEY}`]
-    // }
+    sepolia: {
+      url: ALCHEMY_SEPHOLIA_URL,
+      accounts: [`0x${PRIVATE_KEY}`]
+    }
   }
 };

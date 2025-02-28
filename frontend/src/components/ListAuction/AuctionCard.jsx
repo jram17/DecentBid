@@ -29,7 +29,7 @@ const AuctionCard = ({ auction }) => {
 
   return (
     <div className='group relative rounded-2xl  shadow-md max-w-lg min-w-lg transition-all duration-300 overflow-hidden border-gray-300 border hover:scale-105'>
-      <div className='flex flex-col gap-6 group bg-gray-200 pb-4 '>
+      <div className='flex flex-col gap-6 group bg-white/90 pb-4 '>
         <div className='h-48 w-full object-cover rounded-t-2xl shadow-inner'>
           <img src={auction.cover_image} alt={auction.product}
             className="h-48 w-full object-cover rounded-t-2xl shadow-inner" />
